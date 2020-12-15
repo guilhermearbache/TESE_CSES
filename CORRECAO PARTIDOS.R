@@ -3,6 +3,20 @@
 #muito - TENTAR ACHAR EM ALGUM OUTRO BANCO ESSES PARTIDOS PARA EXPERTS, FAZER VERSÕES DO BANCO SEM ELES, 
 #ETC. 
 
+cses_pr_adj <- cses_pr
+
+### COMEÇAR COM ARGENTINA - usar eleições gerais, passar das primárias
+
+# Ver como fazer isso no código -  mudar pcv de um partido fazer como abaixo
+
+#Mas e para mudar o "ideol_elected"? Talvez melhor fosse inserir código do partido já em quem 
+#foi eleito (portanto, no banco anterior, já antes do código de "ideol_elected")
+#Ou ver como faz para "if election ARG_2015 , ideol_elected == ideol_partyG
+
+cses_pr_adj$pcv_PR_G[election == "ARG_2015"] <- "Elder"
+
+0320007 REPUBLICAN PROPOSAL party_G
+
 
 #INSERIR DADOS PARA SEGUNDO TURNO
 
