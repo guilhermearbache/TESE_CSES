@@ -19,10 +19,110 @@ load("C:/Users/livia/OneDrive - usp.br/TESE/PROJETO - CSES/INTRO-EDIT/cses.RData
 cses_pr <- cses %>% filter (type == 20 | type == 12) %>%
   select (-starts_with("vote_UH"), -starts_with("vote_LH"))
 
-#AGRUPANDO POR PAÍS-ELEIÇÃO PARA VISUALIZAR OS DADOS:
+##### CORREÇÕES DE COALIZÕES #####
 
-#tab_pr <- cses_pr %>% group_by(election, country) %>%
- # summarize_all (.funs = c(mean="mean"))
+#ESSA SEÇÃO NÃO É A DIFERENÇA PARA O ARQUIVO ORIGINAL QUE ESTÁ NA PASTA "PROJETO_CSES"
+
+# Antes de ideology_voted e ideology_elected, faço certas correções em pcv, ideology_party e ideology_voted para 
+
+##### ARGENTINA #####
+
+#ARG_2015 está codificado como tendo eleito a coalizão (0320002, ou party B). Que não tem em "ideology_party" mas tem 
+#em "ex_ideology_party" .
+
+#Esse país é confuso, porque tem várias etapas de eleição (uma espécie de primárias, com vários candidatos de cada
+#aliança, depois a eleição geral e um possível segundo turno). Tudo aqui parece se referir a essa eleição geral, 
+#os votos são para as alianças participantes. Haviam outras alianças/partidos nas primárias mas não fizeram 1.5%.
+#Talvez se refira a essas primárias (mas são tão poucos votos que nenhum entrevistado votou neles, ou votou em algum
+#que não estava disponíveis nem na base numérica do CSES). Ou pior, alguns responderam pensando nas primárias
+# e outros não. Mas aparentemente é tudo da eleição geral. Tirando o fato de que a proporção de votos 
+#para a coalizão representada por 320001/party_A (Front for the Victory) é muito grande em relação
+#ao que houve na eleição geral (630 votos contra 416 da coalizão de Macri). Seria um pouco mais próximo 
+#da proporção que vimos nas primárias. Nas eleições gerais tivemos 37,08% da Frente para Vitória contra 34,15%
+#do Cambiemos, de Macri. Nas primárias foi 36 vs 28%. 
+
+#Estratégia: para preservar o que os experts atribuíram a party B, mas não ficar com NA
+#nem em "ideology_voted" para muitos entrevistados, nem em "ideology_elected" para todos, 
+#vamos transformar ideology_party_B em média de G e H.
+
+cses_pr <- cses_pr %>% mutate (
+  ideolparty_B = case_when(
+    election == "ARG_2015" ~ (ideolparty_G + ideolparty_H)/2,
+       TRUE          ~ ideolparty_B
+  )
+)
+
+#Com isso perdemos alguns valores onde um dos dois partidos está como "NA" mas o outro não
+#(são poucos casos, a maioria onde um está missing outro também). E também não temos dados para o terceiro
+#partido da aliança, o  Civic Coalition (CC-ARI). 
+
+
+## PARA PARTY_D(Aliança "Workers' Left Front") e PARTY_F (Aliança "Compromiso Federal") não temos
+# nenhum partido-membro incluído nas outras letras (A-F são as 6 principais alianças, depois 2
+#partidos da aliança de PARTY_B e por último o Partido Justicialista, que é o principal da aliança
+#representada por PARTY_A). Por isso o ideology_party nesses casos fica missing mesmo.
+
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_A = case_when(
+    election == "ARG_2015" ~ 37.08 ,
+    TRUE          ~ pcv_PR_A
+  )
+)
+
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_B = case_when(
+    election == "ARG_2015" ~ 34.15 ,
+    TRUE          ~ pcv_PR_B
+  )
+)
+
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_C = case_when(
+    election == "ARG_2015" ~ 21.39 ,
+    TRUE          ~ pcv_PR_C
+  )
+)
+
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_D = case_when(
+    election == "ARG_2015" ~ 3.23 ,
+    TRUE          ~ pcv_PR_D
+  )
+)
+
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_E = case_when(
+    election == "ARG_2015" ~ 2.51 ,
+    TRUE          ~ pcv_PR_E
+  )
+)
+
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_F = case_when(
+    election == "ARG_2015" ~ 1.64 ,
+    TRUE          ~ pcv_PR_F
+  )
+)
+
+
+
+
+
+
+# E a diferença de votos na pop. real para os dados? Isso ai vai ser problema em vários. E deve ter correlação
+#tbm entre eleitores de X, Y e o não-posicionamento ideológico (ou pior, não lembrar em quem votou tbm)
+
+
+#BLR_2001 - tudo independente, e não tem party leaders nem em banco original (módulo 1),
+#Entre os candidatos, só um estava filiado a partido, portanto só para PARTY_D (Liberal Democratic
+#Party) tínhamos dados de ideologia. De 1000l entrevistados, só 23 com dados de ideol_party, e 33
+#com ex_ideolparty (LDP) 
+
+## DROP OU USAR O OPCIONAL DO MODULE 1 (A3035)? # JÁ INSERIR ESSES ADICIONAIS TODOS - VER COMO
+#FAZ PARA INSERIR OS MÓDULOS NO INTRO EDIT OU AQUELE OUTRO ARQUIVO. MAS TEM MUITO MISSING
+#ALÉM DE TUDO, MELHOR DROPAR ESSE PAÍS! 
+
+
 
 ###### IDEOLOGY - PARTY VOTED #####
 
