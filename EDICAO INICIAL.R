@@ -38,7 +38,7 @@ load("C:/Users/livia/Desktop/TESE_CSES/cses_add.rdata")
            IMD5011_A:IMD5014, regime_age, IMD5050_1:IMD5051_3, ENEP:CENPP, 
            IMD5052_1:IMD5052_3, efficacy, effic_vote, starts_with("votescast"), starts_with("party_list"), 
            starts_with("rounds"), starts_with("thresholds"), size_LH, direct_election, district:alt_ideol_leader_I,
-           starts_with("exp_alt_ideolparty")) 
+           starts_with("exp_alt_ideolparty"), IMD5100_A:IMD5100_I) 
  
 # Só tem em alguns módulos, não incluídas por enquanto (só variáveis descritivas): C3017 B5015 B5016 B3022,
 # repr_party, repr_leader
@@ -67,7 +67,6 @@ load("C:/Users/livia/Desktop/TESE_CSES/cses_add.rdata")
  names (cses) <- gsub("IMD5004", "pcseats_UH", names(cses))
  names (cses) <- gsub("IMD5005", "pcv_PR", names(cses))
  
- 
  names (cses) <- gsub("IMD5011", "family_ideol", names(cses))
  names (cses) <- gsub("IMD5012", "ex_ideolparty", names(cses))
  names (cses) <- gsub("IMD5013", "system_LH", names(cses))
@@ -76,7 +75,11 @@ load("C:/Users/livia/Desktop/TESE_CSES/cses_add.rdata")
  names (cses) <- gsub("IMD5050", "freedom_house", names(cses))
  names (cses) <- gsub("IMD5051", "polity", names(cses))
  names (cses) <- gsub("IMD5052", "GDP", names(cses))
+
+ names (cses) <- gsub("IMD5100", "manif_ID", names(cses))
  
+ 
+  
  cses$year <- as.numeric(substr(cses$election, 5, 8))
  
 ###### CODIFICAÇÃO DE VARIÁVEIS ##### 
