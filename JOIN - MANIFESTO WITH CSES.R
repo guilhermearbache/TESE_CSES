@@ -175,42 +175,7 @@ mani_cses[,2:45] <- lapply(mani_cses[,2:45],as.numeric)
 
 
 ##### ADIÇÕES MANUAIS #####
-#Turquia, por exemplo, já ficou OK tirando as duplicações. 
-#Agora vejamos Grécia
-
-#Grécia 2012
-
-mani_cses$party_ID_A[mani_cses$election == "GRC_2012"] <- 34511
-
-#Party A  34511	22.727 New Democracy
-
-#Party C 34313	26.531 Panhellenic Socialist Movement
-
-#Party D 34730	-12.258	Independent Greeks
-#Party E 34720 -  38.172 Golden Dawn
-
-#Party F - 34213	-6.709	Democratic Left
-#Party G - 34210	11.043	Communist Party of Greece
-
-# Other - 34020 - radical - tirar?  Popular Orthodox 	34710 - deixar?
-
-#Grécia 2015 - mesmo problema (duas eleições no ano, diferentes)
-
-#Party A - 34212	-41.722	Coalition of the Radical Left
-#Party B  - New Democracy 34511   -8.025
-#Party C - Golden Dawn 34720 2.326 
-#Party D - The River  34340  -12.916
-#Party E - Communist Party of Greece  34210 29.032
-#Party F - Independent Greeks 34730 46.154
-#Party G - Panhellenic Socialist Movement 34313 -37.842
-
-
-
-
-
-
-
-
+#Turquia e Grécia ficaram OK tirando as duplicações. 
 
 #Belgium 1999
 
