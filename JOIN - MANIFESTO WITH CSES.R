@@ -179,17 +179,32 @@ mani_cses[,2:45] <- lapply(mani_cses[,2:45],as.numeric)
 
 #Belgium 1999
 
+#FLANDERS:
+mani_cses$party_ID_A[mani_cses$election == "BELF1999"] <- 21421
+mani_cses$party_ID_B[mani_cses$election == "BELF1999"] <- 21521
+mani_cses$party_ID_C[mani_cses$election == "BELF1999"] <- 21321
+mani_cses$party_ID_D[mani_cses$election == "BELF1999"] <- 21914
+mani_cses$party_ID_E[mani_cses$election == "BELF1999"] <- 21112
+mani_cses$party_ID_F[mani_cses$election == "BELF1999"] <- 21915
 
-#21111	-19763	Ecologists	1	 WAL C 
-#21112	-16.68	Live Differently	1	FLA E 
-#21321	-1429	Flemish Socialist Party	1	 FLA C 
-#21322	-14869	Francophone Socialist Party	1	 WAL A 
-#21421	5556	Flemish Liberals and Democrats	1	FLA A 
-# 21425	-7805	Liberal Reformation Party - Francophone Democratic Front 1	WAL B 
-# 21521	-4185	Christian Democratic and Flemish	1	FLA B 
-# 21522	-11928	Christian Social Party	1	 WAL D 
-# 21914	-2997	Flemish Bloc	3	FLA D 
-# 21915	-6612	People’s Union - Complete Democracy for the 21st century	1	FLA F 
+mani_cses$ideology_party_A[mani_cses$election == "BELF1999"] <- 5.556
+mani_cses$ideology_party_B[mani_cses$election == "BELF1999"] <- -4.185
+mani_cses$ideology_party_C[mani_cses$election == "BELF1999"] <- -1.429
+mani_cses$ideology_party_D[mani_cses$election == "BELF1999"] <- -2.997
+mani_cses$ideology_party_E[mani_cses$election == "BELF1999"] <- -16.68
+mani_cses$ideology_party_F[mani_cses$election == "BELF1999"] <- -6.612
+
+#WALONIA:
+mani_cses$party_ID_A[mani_cses$election == "BELW1999"] <- 21322
+mani_cses$party_ID_B[mani_cses$election == "BELW1999"] <- 21425
+mani_cses$party_ID_C[mani_cses$election == "BELW1999"] <- 21111
+mani_cses$party_ID_D[mani_cses$election == "BELW1999"] <- 21522
+
+mani_cses$ideology_party_A[mani_cses$election == "BELW1999"] <- -14.869
+mani_cses$ideology_party_B[mani_cses$election == "BELW1999"] <- -7.805
+mani_cses$ideology_party_C[mani_cses$election == "BELW1999"] <- -19.763
+mani_cses$ideology_party_D[mani_cses$election == "BELW1999"] <- -11.928
+
 
 
 
