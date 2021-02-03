@@ -21,8 +21,8 @@ tab_cses$cname <- substr(tab_cses$election, 1, 3)
 tab_cses[tab_cses$election == "DEU12002" , "election"] <- "DEU_2002"
 
 
-##### EXPLICAÇÃO ##### 
-#se eu apenas criar uma variável sem a quarta letra, de qualquer forma esses 4 casos vão virar 2 casos duplicados. 
+##### OBS ##### 
+#EXPLICAÇÃO:se eu apenas criar uma variável sem a quarta letra, de qualquer forma esses 4 casos vão virar 2 casos duplicados. 
 # BEL_1999 não tem dados de partidos do Manifesto de qualquer forma, então, esse caso é melhor DROPAR.
 #DEU1 e DEU2, por são idênticos nas colunas referentes a party_ID de Manifesto (como esperado). 
 #Então só preciso de um deles
@@ -68,6 +68,23 @@ corpus_original$date <- substr(corpus_original$date, 1, 4)
 corpus_original$cname <- tab_cses$cname[match(corpus_original$countryname, tab_cses$country)]
 
 
+#RETIRANDO DADOS DUPLICADOS (duas eleições no mesmo ano-país, Snap Elections)
+#Casos: GRC_2012, GRC_2015, TUR_2015. Vamos deixar só as que são o foco no CSES
+
+##Turkey 2015 - eleições em junho e novembro, CSES focado na de junho (realizado por volta de julho)
+#Portanto vamos tirar a "snap election", de novembro:
+
+corpus_original <- corpus_original %>% 
+  filter (corpus_original$countryname != "Turkey" | corpus_original$edate != "2015-11-01")
+
+#Grécia - para 2012 a eleição de junho foi a considerada no CSES (2ª eleição, "snap"), tirar a de maio.
+#Para 2015 foi a primeira (janeiro de 2015), tirar a de setembro.
+
+corpus_original <- corpus_original %>% 
+  filter (corpus_original$countryname != "Greece" | corpus_original$edate != "2012-05-06" &
+            corpus_original$edate !="2015-09-20")
+
+
 ##### ADICIONANDO ALGUNS PAÍSES QUE NÃO FUNCIONOU MATCH:
 corpus_original$cname[corpus_original$countryname == "United Kingdom"] <- "GBR"
 corpus_original$cname[corpus_original$countryname == "United States"] <- "USA"
@@ -80,7 +97,7 @@ corpus_original$election <- str_c(corpus_original$cname, "_", corpus_original$da
 # LIMPEZA E EDIÇÃO FINAL #
 
 corpus <- corpus_original %>% rename(ID = party, ideology = rile) %>% 
-  select (election, ID, ideology, partyname, progtype)
+  select (election, ID, ideology)
 
 ##### LIMPAR MANIFESTO - SÓ ELEIÇÕES DE CSES #####
 
@@ -146,14 +163,6 @@ mani_cses <- corpus_lean %>% full_join(tab_cses2 %>% pivot_longer(cols=-election
          starts_with("ideology_party"), starts_with("ideology_other"))
 
 
-#Warning message:
-#Values are not uniquely identified; output will contain list-cols.
-#* Use `values_fn = list` to suppress this warning.
-#* Use `values_fn = length` to identify where the duplicates arise
-#* Use `values_fn = {summary_fun}` to summarise duplicates 
-
-
-
 
 # Não consigo transformar em csv para verificar porque tem class "unknown" (aparentemente tudo está como "list")
 
@@ -165,8 +174,14 @@ mani_cses[,2:45] <- lapply(mani_cses[,2:45],as.character)
 mani_cses[,2:45] <- lapply(mani_cses[,2:45],as.numeric)
 
 
-##### CORREÇÕES/ADIÇÕES MANUAIS #####
+##### ADIÇÕES MANUAIS #####
+#Turquia, por exemplo, já ficou OK tirando as duplicações. 
+#Agora vejamos Grécia
+
 #Grécia 2012
+
+mani_cses$party_ID_A[mani_cses$election == "GRC_2012"] <- 34511
+
 #Party A  34511	22.727 New Democracy
 
 #Party C 34313	26.531 Panhellenic Socialist Movement
@@ -184,14 +199,32 @@ mani_cses[,2:45] <- lapply(mani_cses[,2:45],as.numeric)
 #Party A - 34212	-41.722	Coalition of the Radical Left
 #Party B  - New Democracy 34511   -8.025
 #Party C - Golden Dawn 34720 2.326 
-#Party D - The River  - no data!
+#Party D - The River  34340  -12.916
 #Party E - Communist Party of Greece  34210 29.032
 #Party F - Independent Greeks 34730 46.154
 #Party G - Panhellenic Socialist Movement 34313 -37.842
 
 
 
-Corpus_Greece <- corpus_original %>% select (countryname, edate, date, 
-                                               partyname, party, rile, progtype) %>%
-                    filter (countryname == "Greece" & date > 2000)
+
+
+
+
+
+
+#Belgium 1999
+
+
+#21111	-19763	Ecologists	1	 WAL C 
+#21112	-16.68	Live Differently	1	FLA E 
+#21321	-1429	Flemish Socialist Party	1	 FLA C 
+#21322	-14869	Francophone Socialist Party	1	 WAL A 
+#21421	5556	Flemish Liberals and Democrats	1	FLA A 
+# 21425	-7805	Liberal Reformation Party - Francophone Democratic Front 1	WAL B 
+# 21521	-4185	Christian Democratic and Flemish	1	FLA B 
+# 21522	-11928	Christian Social Party	1	 WAL D 
+# 21914	-2997	Flemish Bloc	3	FLA D 
+# 21915	-6612	People’s Union - Complete Democracy for the 21st century	1	FLA F 
+
+
 
