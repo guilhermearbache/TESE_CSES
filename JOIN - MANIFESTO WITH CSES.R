@@ -203,6 +203,7 @@ manif_latam$election <- str_c(manif_latam$cname, "_", manif_latam$date)
 latam <- manif_latam[manif_latam$election %in% countries,] %>% rename(ID = party, ideology = rile) %>% select (election, ID, partyname, ideology, edate, progtype)
 
 
+<<<<<<< HEAD
 ##### INSERÇÕES MANUAIS
 
 # ARG_2015:
@@ -243,12 +244,55 @@ mani_cses$ideology_party_D[mani_cses$election == "CHL_2009"] <- -18.857
 mani_cses$ideology_party_H[mani_cses$election == "CHL_2009"] <- -28.325
 mani_cses$ideology_party_G[mani_cses$election == "CHL_2009"] <- -41.486
 mani_cses$ideology_party_B[mani_cses$election == "CHL_2009"] <- -3.029
+=======
+# INSERÇÕES MANUAIS
+
+# ARG_2015:
+mani_cses$party_ID_C[mani_cses$election == ARG_2015] <- 150021
+mani_cses$party_ID_A[mani_cses$election == ARG_2015] <- 150025
+mani_cses$party_ID_B[mani_cses$election == ARG_2015] <- 150062
+
+mani_cses$ideology_party_C[mani_cses$election == ARG_2015] <- 8.333
+mani_cses$ideology_party_A[mani_cses$election == ARG_2015] <- -31.233
+mani_cses$ideology_party_B[mani_cses$election == ARG_2015] <- -21.354
+
+#Chile 1999:
+mani_cses$party_ID_A[mani_cses$election == CHL_1999] <- 155021
+mani_cses$party_ID_B[mani_cses$election == CHL_1999] <- 155061
+
+mani_cses$ideology_party_A[mani_cses$election == CHL_1999] <- -13.596
+mani_cses$ideology_party_B[mani_cses$election == CHL_1999] <- -5.017
+
+#Chile 2005:
+
+mani_cses$party_ID_E[mani_cses$election == CHL_2005] <- 155021
+mani_cses$other_party_1[mani_cses$election == CHL_2005] <- 155025
+mani_cses$party_ID_A[mani_cses$election == CHL_2005] <- 155601
+mani_cses$party_ID_D[mani_cses$election == CHL_2005] <- 155602
+
+mani_cses$ideology_party_E[mani_cses$election == CHL_2005] <- -19.715
+mani_cses$ideology_other_party_1[mani_cses$election == CHL_2005] <- -36.323
+mani_cses$ideology_party_A[mani_cses$election == CHL_2005] <- 16.892
+mani_cses$ideology_party_D[mani_cses$election == CHL_2005] <- -0.809
+
+#Chile 2009:
+mani_cses$party_ID_D[mani_cses$election == CHL_2009] <- 155021
+mani_cses$party_ID_H[mani_cses$election == CHL_2009] <- 155023
+mani_cses$party_ID_G[mani_cses$election == CHL_2009] <- 155025
+mani_cses$party_ID_B[mani_cses$election == CHL_2009] <- 155061
+
+mani_cses$ideology_party_D[mani_cses$election == CHL_2009] <- -18.857
+mani_cses$ideology_party_H[mani_cses$election == CHL_2009] <- -28.325
+mani_cses$ideology_party_G[mani_cses$election == CHL_2009] <- -41.486
+mani_cses$ideology_party_B[mani_cses$election == CHL_2009] <- -3.029
+>>>>>>> 5d13f6f4bba693cdef0dcb050a0e5d5541505c35
 
 
 
 #Brasil:
 
 #2002
+<<<<<<< HEAD
 mani_cses$party_ID_A[mani_cses$election == "BRA_2002"] <- 180230
 mani_cses$party_ID_F[mani_cses$election == "BRA_2002"] <- 180240
 mani_cses$party_ID_B[mani_cses$election == "BRA_2002"] <- 180310
@@ -258,10 +302,22 @@ mani_cses$ideology_party_A[mani_cses$election == "BRA_2002"] <- -21.955
 mani_cses$ideology_party_F[mani_cses$election == "BRA_2002"] <- -12.53
 mani_cses$ideology_party_B[mani_cses$election == "BRA_2002"] <- -10.523
 mani_cses$ideology_other_party_1[mani_cses$election == "BRA_2002"] <- -20.711
+=======
+mani_cses$party_ID_A[mani_cses$election == BRA_2002] <- 180230
+mani_cses$party_ID_F[mani_cses$election == BRA_2002] <- 180240
+mani_cses$party_ID_B[mani_cses$election == BRA_2002] <- 180310
+mani_cses$other_party_1[mani_cses$election == BRA_2002] <- 180320
+
+mani_cses$ideology_party_A[mani_cses$election == BRA_2002] <- -21.955
+mani_cses$ideology_party_F[mani_cses$election == BRA_2002] <- -12.53
+mani_cses$ideology_party_B[mani_cses$election == BRA_2002] <- -10.523
+mani_cses$ideology_other_party_1[mani_cses$election == BRA_2002] <- -20.711
+>>>>>>> 5d13f6f4bba693cdef0dcb050a0e5d5541505c35
 
 
 
 #2006:
+<<<<<<< HEAD
 mani_cses$party_ID_B[mani_cses$election == "BRA_2006"] <- 180230
 mani_cses$other_party_1[mani_cses$election == "BRA_2006"] <- 180231
 mani_cses$party_ID_C[mani_cses$election == "BRA_2006"] <- 180310
@@ -287,6 +343,33 @@ mani_cses$party_ID_B[mani_cses$election == "BRA_2014"] <- 180310
 mani_cses$ideology_party_A[mani_cses$election == "BRA_2014"] <- -12.048
 mani_cses$ideology_party_E[mani_cses$election == "BRA_2014"] <- -5.394
 mani_cses$ideology_party_B[mani_cses$election == "BRA_2014"] <- -5.085
+=======
+mani_cses$party_ID_B[mani_cses$election == BRA_2006] <- 180230
+mani_cses$other_party_1[mani_cses$election == BRA_2006] <- 180231
+mani_cses$party_ID_C[mani_cses$election == BRA_2006] <- 180310
+
+mani_cses$ideology_party_B[mani_cses$election == BRA_2006] <- -19.005
+mani_cses$ideology_other_party_1[mani_cses$election == BRA_2006] <- -51.128
+mani_cses$ideology_party_C[mani_cses$election == BRA_2006] <- -9.202
+
+#2010:
+mani_cses$other_party_1[mani_cses$election == BRA_2010] <- 180110
+mani_cses$party_ID_A[mani_cses$election == BRA_2010] <- 180230
+mani_cses$party_ID_C[mani_cses$election == BRA_2010] <- 180310
+
+mani_cses$ideology_other_party_1[mani_cses$election == BRA_2010] <- -28.302
+mani_cses$ideology_party_A[mani_cses$election == BRA_2010] <- -13.636
+mani_cses$ideology_party_C[mani_cses$election == BRA_2010] <- -11.302
+
+#2014:
+mani_cses$party_ID_A[mani_cses$election == BRA_2014] <- 180230
+mani_cses$party_ID_E[mani_cses$election == BRA_2014] <- 180240
+mani_cses$party_ID_B[mani_cses$election == BRA_2014] <- 180310
+
+mani_cses$ideology_party_A[mani_cses$election == BRA_2014] <- -12.048
+mani_cses$ideology_party_E[mani_cses$election == BRA_2014] <- -5.394
+mani_cses$ideology_party_B[mani_cses$election == BRA_2014] <- -5.085
+>>>>>>> 5d13f6f4bba693cdef0dcb050a0e5d5541505c35
 
 
 
