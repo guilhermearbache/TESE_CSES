@@ -205,6 +205,59 @@ mani_cses$ideology_party_B[mani_cses$election == "BELW1999"] <- -7.805
 mani_cses$ideology_party_C[mani_cses$election == "BELW1999"] <- -19.763
 mani_cses$ideology_party_D[mani_cses$election == "BELW1999"] <- -11.928
 
+##### INSERINDO EM CSES #####
+
+cses$manifesto_ID_A <- mani_cses$party_ID_A[match(cses$election, mani_cses$election)]
+cses$manifesto_ID_B <- mani_cses$party_ID_B[match(cses$election, mani_cses$election)]
+cses$manifesto_ID_C <- mani_cses$party_ID_C[match(cses$election, mani_cses$election)]
+cses$manifesto_ID_D <- mani_cses$party_ID_D[match(cses$election, mani_cses$election)]
+cses$manifesto_ID_E <- mani_cses$party_ID_E[match(cses$election, mani_cses$election)]
+cses$manifesto_ID_F <- mani_cses$party_ID_F[match(cses$election, mani_cses$election)]
+cses$manifesto_ID_G <- mani_cses$party_ID_G[match(cses$election, mani_cses$election)]
+cses$manifesto_ID_H <- mani_cses$party_ID_H[match(cses$election, mani_cses$election)]
+cses$manifesto_ID_I <- mani_cses$party_ID_I[match(cses$election, mani_cses$election)]
 
 
+cses$rile_A <- mani_cses$ideology_party_A[match(cses$election, mani_cses$election)]
+cses$rile_B <- mani_cses$ideology_party_B[match(cses$election, mani_cses$election)]
+cses$rile_C <- mani_cses$ideology_party_C[match(cses$election, mani_cses$election)]
+cses$rile_D <- mani_cses$ideology_party_D[match(cses$election, mani_cses$election)]
+cses$rile_E <- mani_cses$ideology_party_E[match(cses$election, mani_cses$election)]
+cses$rile_F <- mani_cses$ideology_party_F[match(cses$election, mani_cses$election)]
+cses$rile_G <- mani_cses$ideology_party_G[match(cses$election, mani_cses$election)]
+cses$rile_H <- mani_cses$ideology_party_H[match(cses$election, mani_cses$election)]
+cses$rile_I <- mani_cses$ideology_party_I[match(cses$election, mani_cses$election)]
+
+#Agora falta os "other party" - mesma coisa:
+cses$mani_ID_1 <- mani_cses$other_party_1[match(cses$election, mani_cses$election)]
+cses$mani_ID_2 <- mani_cses$other_party_2[match(cses$election, mani_cses$election)]
+cses$mani_ID_3 <- mani_cses$other_party_3[match(cses$election, mani_cses$election)]
+cses$mani_ID_4 <- mani_cses$other_party_4[match(cses$election, mani_cses$election)]
+cses$mani_ID_5 <- mani_cses$other_party_5[match(cses$election, mani_cses$election)]
+cses$mani_ID_6 <- mani_cses$other_party_6[match(cses$election, mani_cses$election)]
+cses$mani_ID_7 <- mani_cses$other_party_7[match(cses$election, mani_cses$election)]
+cses$mani_ID_8 <- mani_cses$other_party_8[match(cses$election, mani_cses$election)]
+
+cses$mani_ID_9  <- mani_cses$other_party_9[match(cses$election, mani_cses$election)]
+cses$mani_ID_10 <- mani_cses$other_party_10[match(cses$election, mani_cses$election)]
+cses$mani_ID_11 <- mani_cses$other_party_11[match(cses$election, mani_cses$election)]
+cses$mani_ID_12 <- mani_cses$other_party_12[match(cses$election, mani_cses$election)]
+cses$mani_ID_13 <- mani_cses$other_party_13[match(cses$election, mani_cses$election)]
+
+
+
+cses$rile_other_1 <- mani_cses$ideology_other_party_1[match(cses$election, mani_cses$election)]
+cses$rile_other_2 <- mani_cses$ideology_other_party_2[match(cses$election, mani_cses$election)]
+cses$rile_other_3 <- mani_cses$ideology_other_party_3[match(cses$election, mani_cses$election)]
+cses$rile_other_4 <- mani_cses$ideology_other_party_4[match(cses$election, mani_cses$election)]
+cses$rile_other_5 <- mani_cses$ideology_other_party_5[match(cses$election, mani_cses$election)]
+cses$rile_other_6 <- mani_cses$ideology_other_party_6[match(cses$election, mani_cses$election)]
+cses$rile_other_7 <- mani_cses$ideology_other_party_7[match(cses$election, mani_cses$election)]
+cses$rile_other_8 <- mani_cses$ideology_other_party_8[match(cses$election, mani_cses$election)]
+
+cses$rile_other_9  <- mani_cses$ideology_other_party_9[match(cses$election, mani_cses$election)]
+cses$rile_other_10 <- mani_cses$ideology_other_party_10[match(cses$election, mani_cses$election)]
+cses$rile_other_11 <- mani_cses$ideology_other_party_11[match(cses$election, mani_cses$election)]
+cses$rile_other_12 <- mani_cses$ideology_other_party_12[match(cses$election, mani_cses$election)]
+cses$rile_other_13 <- mani_cses$ideology_other_party_13[match(cses$election, mani_cses$election)]
 
