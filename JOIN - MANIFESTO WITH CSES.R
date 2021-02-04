@@ -1,16 +1,16 @@
 ##### CSES #####
 
-#Arrumar tab_cses para ter sÛ essas vari·veis de interesse - ELECTION, ID MANIFESTO S”? 
+#Arrumar tab_cses para ter s√≥ essas vari√°veis de interesse - ELECTION, ID MANIFESTO S√ì? 
 
 tab_cses <- cses %>% group_by(election, country) %>%
   select (country, election, starts_with("manif")) %>%
-summarize_all (.funs = c(mean="mean"), na.rm = T)
+  summarize_all (.funs = c(mean="mean"), na.rm = T)
 
 names (tab_cses) <- gsub("_mean", "", names(tab_cses))
 names (tab_cses) <- gsub("manif", "party", names(tab_cses))
 
 
-#CRIAR VARI¡VEL PARA PAÕS COM TR S LETRAS EM CSES:
+#CRIAR VARI√ÅVEL PARA PA√çS COM TR√äS LETRAS EM CSES:
 
 tab_cses$cname <- substr(tab_cses$election, 1, 3)
 
@@ -22,23 +22,23 @@ tab_cses[tab_cses$election == "DEU12002" , "election"] <- "DEU_2002"
 
 
 ##### OBS ##### 
-#EXPLICA«√O:se eu apenas criar uma vari·vel sem a quarta letra, de qualquer forma esses 4 casos v„o virar 2 casos duplicados. 
-# BEL_1999 n„o tem dados de partidos do Manifesto de qualquer forma, ent„o, esse caso È melhor DROPAR.
-#DEU1 e DEU2, por s„o idÍnticos nas colunas referentes a party_ID de Manifesto (como esperado). 
-#Ent„o sÛ preciso de um deles
+#EXPLICA√á√ÉO:se eu apenas criar uma vari√°vel sem a quarta letra, de qualquer forma esses 4 casos v√£o virar 2 casos duplicados. 
+# BEL_1999 n√£o tem dados de partidos do Manifesto de qualquer forma, ent√£o, esse caso √© melhor DROPAR.
+#DEU1 e DEU2, por s√£o id√™nticos nas colunas referentes a party_ID de Manifesto (como esperado). 
+#Ent√£o s√≥ preciso de um deles
 
-#Como ainda n„o sei fazer rodar o cÛdigo de JunÁ„o abaixo com outras vari·veis extras, de character, 
-#alÈm da vari·vel que vai ser a chave para o match ("elections" no caso), melhor deixar como est· e
-#sÛ alterar um dos dois DEU_2002 e dropar o outro. Se tivesse um caso de dois bancos diferentes no mesmo
-#paÌs-ano com IDs diferentes para os PARTIDOS DO MANIFESTO, aÌ a soluÁ„o talvez fosse rodar os cÛdigos
-# de junÁ„o em separado para cada um dos bancos, depois junt·-los com o resto (aÌ poderia fazer ou
-#com a quarta letra mas aÌ teria que adicionar essa quarta letra no banco original de manifesto tambÈm -
-#primeiro para um dos bancos, tipo BEL_2002 recode para BELF_2002, depois a outra). Ou ent„o
-#poderia duplicar no Manifesto todas linhas relacionadas a BEL_2002, e recodificar uma cÛpia para 
+#Como ainda n√£o sei fazer rodar o c√≥digo de Jun√ß√£o abaixo com outras vari√°veis extras, de character, 
+#al√©m da vari√°vel que vai ser a chave para o match ("elections" no caso), melhor deixar como est√° e
+#s√≥ alterar um dos dois DEU_2002 e dropar o outro. Se tivesse um caso de dois bancos diferentes no mesmo
+#pa√≠s-ano com IDs diferentes para os PARTIDOS DO MANIFESTO, a√≠ a solu√ß√£o talvez fosse rodar os c√≥digos
+# de jun√ß√£o em separado para cada um dos bancos, depois junt√°-los com o resto (a√≠ poderia fazer ou
+#com a quarta letra mas a√≠ teria que adicionar essa quarta letra no banco original de manifesto tamb√©m -
+#primeiro para um dos bancos, tipo BEL_2002 recode para BELF_2002, depois a outra). Ou ent√£o
+#poderia duplicar no Manifesto todas linhas relacionadas a BEL_2002, e recodificar uma c√≥pia para 
 #BELF, outra para BELW.
 
 #tab_cses$election <- tab_cses$election
-  
+
 #substr(tab_cses$election, 4, 4) <- "_"
 
 
@@ -48,7 +48,7 @@ tab_cses[tab_cses$election == "DEU12002" , "election"] <- "DEU_2002"
 
 ##### MANIFESTO #####
 
-# Arrumar colunas de MANIFESTO PARA SER S” ID E ideology, e ELECTION! # Tem que fazer election!
+# Arrumar colunas de MANIFESTO PARA SER S√ì ID E ideology, e ELECTION! # Tem que fazer election!
 
 library(manifestoR)
 mp_setapikey("manifesto_apikey.txt")
@@ -57,27 +57,27 @@ mp_setapikey("manifesto_apikey.txt")
 
 corpus_original <- mp_maindataset()
 
-# Mudando data para ter sÛ o ano (tirando meses):
+# Mudando data para ter s√≥ o ano (tirando meses):
 
 corpus_original$date <- substr(corpus_original$date, 1, 4)
 
 
-# EDI«’ES PARA MATCH - ELECTIONS #
+# EDI√á√ïES PARA MATCH - ELECTIONS #
 
-#DEPOIS, UM MATCH DESSA VARI¡VEL COM MANIFESTO, DE ACORDO COM NOME EXTENSO, PARA TER ELA AO INV…S DE NOME EXTENSO APENAS 
+#DEPOIS, UM MATCH DESSA VARI√ÅVEL COM MANIFESTO, DE ACORDO COM NOME EXTENSO, PARA TER ELA AO INV√âS DE NOME EXTENSO APENAS 
 corpus_original$cname <- tab_cses$cname[match(corpus_original$countryname, tab_cses$country)]
 
 
-#RETIRANDO DADOS DUPLICADOS (duas eleiÁıes no mesmo ano-paÌs, Snap Elections)
-#Casos: GRC_2012, GRC_2015, TUR_2015. Vamos deixar sÛ as que s„o o foco no CSES
+#RETIRANDO DADOS DUPLICADOS (duas elei√ß√µes no mesmo ano-pa√≠s, Snap Elections)
+#Casos: GRC_2012, GRC_2015, TUR_2015. Vamos deixar s√≥ as que s√£o o foco no CSES
 
-##Turkey 2015 - eleiÁıes em junho e novembro, CSES focado na de junho (realizado por volta de julho)
+##Turkey 2015 - elei√ß√µes em junho e novembro, CSES focado na de junho (realizado por volta de julho)
 #Portanto vamos tirar a "snap election", de novembro:
 
 corpus_original <- corpus_original %>% 
   filter (corpus_original$countryname != "Turkey" | corpus_original$edate != "2015-11-01")
 
-#GrÈcia - para 2012 a eleiÁ„o de junho foi a considerada no CSES (2™ eleiÁ„o, "snap"), tirar a de maio.
+#Gr√©cia - para 2012 a elei√ß√£o de junho foi a considerada no CSES (2¬™ elei√ß√£o, "snap"), tirar a de maio.
 #Para 2015 foi a primeira (janeiro de 2015), tirar a de setembro.
 
 corpus_original <- corpus_original %>% 
@@ -85,21 +85,21 @@ corpus_original <- corpus_original %>%
             corpus_original$edate !="2015-09-20")
 
 
-##### ADICIONANDO ALGUNS PAÕSES QUE N√O FUNCIONOU MATCH:
+##### ADICIONANDO ALGUNS PA√çSES QUE N√ÉO FUNCIONOU MATCH:
 corpus_original$cname[corpus_original$countryname == "United Kingdom"] <- "GBR"
 corpus_original$cname[corpus_original$countryname == "United States"] <- "USA"
 corpus_original$cname[corpus_original$countryname == "Russia"] <- "RUS"
 corpus_original$cname[corpus_original$countryname == "South Korea"] <- "KOR"
- 
-#AÕ S” JUNTAR COM ANO PARA TER O EQUIVALENTE AO QUE TEMOS EM CSES COMO "ELECTION":
+
+#A√ç S√ì JUNTAR COM ANO PARA TER O EQUIVALENTE AO QUE TEMOS EM CSES COMO "ELECTION":
 corpus_original$election <- str_c(corpus_original$cname, "_", corpus_original$date)
 
-# LIMPEZA E EDI«√O FINAL #
+# LIMPEZA E EDI√á√ÉO FINAL #
 
 corpus <- corpus_original %>% rename(ID = party, ideology = rile) %>% 
   select (election, ID, ideology)
 
-##### LIMPAR MANIFESTO - S” ELEI«’ES DE CSES #####
+##### LIMPAR MANIFESTO - S√ì ELEI√á√ïES DE CSES #####
 
 
 #CRIANDO UMA LISTA COM OS VALORES DE "ELECTION" NO CSES:
@@ -109,47 +109,21 @@ countries$Freq <- NULL
 countries <- unlist(countries,use.names = FALSE)
 
 #Usando essa lista para filtrar o dataset do Manifesto, 
-#deixando sÛ as eleiÁıes que constam no CSES:
+#deixando s√≥ as elei√ß√µes que constam no CSES:
 corpus_lean <- corpus[corpus$election %in% countries,]
 
 
-##### CRIANDO VERS√O DE TAB_CSES SEM VARI¡VEIS QUE FIZ S” PARA
-#DAR O MATCH ACIMA, CRIAR "ELECTION" NO MANIFESTO:
+##### CRIANDO VERS√ÉO DE TAB_CSES SEM VARI√ÅVEIS QUE FIZ S√ì PARA
+#DAR O MATCH ACIMA, CRIAR "ELECTION" NO MANIFESTO (E COM UNGROUP PARA VARI√ÅVEL "COUNTRY" N√ÉO FICAR "VOLTANDO"):
 
 tab_cses2 <- tab_cses %>% ungroup() %>% select (-country, -cname)
 
-##### LATAM #####
-manif_latam <- mp_southamerica_dataset()
-
-# Mudando data para ter sÛ o ano (tirando meses):
-
-manif_latam$date <- substr(manif_latam$date, 1, 4)
-
-# EDI«’ES PARA MATCH - ELECTIONS #
-
-#DEPOIS, UM MATCH DESSA VARI¡VEL COM MANIFESTO, DE ACORDO COM NOME EXTENSO, PARA TER ELA AO INV…S DE NOME EXTENSO APENAS 
-manif_latam$cname <- tab_cses$cname[match(manif_latam$countryname, tab_cses$country)]
-
-#AÕ S” JUNTAR COM ANO PARA TER O EQUIVALENTE AO QUE TEMOS EM CSES COMO "ELECTION":
-manif_latam$election <- str_c(manif_latam$cname, "_", manif_latam$date)
-
-# CRIANDO BANCO S” COM AS "ELECTIONS" EM CSES:
-latam <- manif_latam[manif_latam$election %in% countries,]
-
-# LIMPEZA E EDI«√O FINAL #
-
-latam <- latam %>% rename(ID = party, ideology = rile) %>% select (election, ID, ideology)
-
-##### EDI«’ES FINAIS TAB_CSES - N√O ESTOU MAIS USANDO ISSO, TEM QUE DAR UNGROUP SEN√O ESSA
-#VARI¡VEL "COUNTRY" FICA RETORNANDO: 
-
-#tab_cses$country <- NULL
-#tab_cses$cname <- NULL
-
-##### JUN«√O #####
 
 
-## AGORA SIM, PROCEDENDO PARA O C”DIGO FORNECIDO NO STACK PARA JUNTAR MANIFESTO E CSES:
+##### JUN√á√ÉO #####
+
+
+## AGORA SIM, PROCEDENDO PARA O C√ìDIGO FORNECIDO NO STACK PARA JUNTAR MANIFESTO E CSES:
 
 mani_cses <- corpus_lean %>% full_join(tab_cses2 %>% pivot_longer(cols=-election, values_to="ID"), by=c("election", "ID")) %>%
   arrange(election, name) %>% nest(data=-election) %>% mutate(data=map(data, function(data){
@@ -164,18 +138,18 @@ mani_cses <- corpus_lean %>% full_join(tab_cses2 %>% pivot_longer(cols=-election
 
 
 
-# N„o consigo transformar em csv para verificar porque tem class "unknown" (aparentemente tudo est· como "list")
+# N√£o consigo transformar em csv para verificar porque tem class "unknown" (aparentemente tudo est√° como "list")
 
 
-#Mudei primeiro para character porque n„o pode mudar list direto para numeric:
+#Mudei primeiro para character porque n√£o pode mudar list direto para numeric:
 #mani_cses[,2:45] <- lapply(mani_cses[,2:45],unlist)
 
 mani_cses[,2:45] <- lapply(mani_cses[,2:45],as.character)
 mani_cses[,2:45] <- lapply(mani_cses[,2:45],as.numeric)
 
 
-##### ADI«’ES MANUAIS #####
-#Turquia e GrÈcia ficaram OK tirando as duplicaÁıes. 
+##### ADI√á√ïES MANUAIS #####
+#Turquia e Gr√©cia ficaram OK tirando as duplica√ß√µes. 
 
 #Belgium 1999
 
@@ -204,6 +178,118 @@ mani_cses$ideology_party_A[mani_cses$election == "BELW1999"] <- -14.869
 mani_cses$ideology_party_B[mani_cses$election == "BELW1999"] <- -7.805
 mani_cses$ideology_party_C[mani_cses$election == "BELW1999"] <- -19.763
 mani_cses$ideology_party_D[mani_cses$election == "BELW1999"] <- -11.928
+
+
+
+
+##### LATIN AMERICA #####
+
+##### LATAM #####
+manif_latam <- mp_southamerica_dataset()
+
+# Mudando data para ter s√≥ o ano (tirando meses):
+
+manif_latam$date <- substr(manif_latam$date, 1, 4)
+
+# EDI√á√ïES PARA MATCH - ELECTIONS #
+
+#DEPOIS, UM MATCH DESSA VARI√ÅVEL COM MANIFESTO, DE ACORDO COM NOME EXTENSO, PARA TER ELA AO INV√âS DE NOME EXTENSO APENAS 
+manif_latam$cname <- tab_cses$cname[match(manif_latam$countryname, tab_cses$country)]
+
+#A√ç S√ì JUNTAR COM ANO PARA TER O EQUIVALENTE AO QUE TEMOS EM CSES COMO "ELECTION":
+manif_latam$election <- str_c(manif_latam$cname, "_", manif_latam$date)
+
+# CRIANDO BANCO S√ì COM AS "ELECTIONS" EM CSES:
+latam <- manif_latam[manif_latam$election %in% countries,] %>% rename(ID = party, ideology = rile) %>% select (election, ID, partyname, ideology, edate, progtype)
+
+
+# INSER√á√ïES MANUAIS
+
+# ARG_2015:
+mani_cses$party_ID_C[mani_cses$election == ARG_2015] <- 150021
+mani_cses$party_ID_A[mani_cses$election == ARG_2015] <- 150025
+mani_cses$party_ID_B[mani_cses$election == ARG_2015] <- 150062
+
+mani_cses$ideology_party_C[mani_cses$election == ARG_2015] <- 8.333
+mani_cses$ideology_party_A[mani_cses$election == ARG_2015] <- -31.233
+mani_cses$ideology_party_B[mani_cses$election == ARG_2015] <- -21.354
+
+#Chile 1999:
+mani_cses$party_ID_A[mani_cses$election == CHL_1999] <- 155021
+mani_cses$party_ID_B[mani_cses$election == CHL_1999] <- 155061
+
+mani_cses$ideology_party_A[mani_cses$election == CHL_1999] <- -13.596
+mani_cses$ideology_party_B[mani_cses$election == CHL_1999] <- -5.017
+
+#Chile 2005:
+
+mani_cses$party_ID_E[mani_cses$election == CHL_2005] <- 155021
+mani_cses$other_party_1[mani_cses$election == CHL_2005] <- 155025
+mani_cses$party_ID_A[mani_cses$election == CHL_2005] <- 155601
+mani_cses$party_ID_D[mani_cses$election == CHL_2005] <- 155602
+
+mani_cses$ideology_party_E[mani_cses$election == CHL_2005] <- -19.715
+mani_cses$ideology_other_party_1[mani_cses$election == CHL_2005] <- -36.323
+mani_cses$ideology_party_A[mani_cses$election == CHL_2005] <- 16.892
+mani_cses$ideology_party_D[mani_cses$election == CHL_2005] <- -0.809
+
+#Chile 2009:
+mani_cses$party_ID_D[mani_cses$election == CHL_2009] <- 155021
+mani_cses$party_ID_H[mani_cses$election == CHL_2009] <- 155023
+mani_cses$party_ID_G[mani_cses$election == CHL_2009] <- 155025
+mani_cses$party_ID_B[mani_cses$election == CHL_2009] <- 155061
+
+mani_cses$ideology_party_D[mani_cses$election == CHL_2009] <- -18.857
+mani_cses$ideology_party_H[mani_cses$election == CHL_2009] <- -28.325
+mani_cses$ideology_party_G[mani_cses$election == CHL_2009] <- -41.486
+mani_cses$ideology_party_B[mani_cses$election == CHL_2009] <- -3.029
+
+
+
+#Brasil:
+
+#2002
+mani_cses$party_ID_A[mani_cses$election == BRA_2002] <- 180230
+mani_cses$party_ID_F[mani_cses$election == BRA_2002] <- 180240
+mani_cses$party_ID_B[mani_cses$election == BRA_2002] <- 180310
+mani_cses$other_party_1[mani_cses$election == BRA_2002] <- 180320
+
+mani_cses$ideology_party_A[mani_cses$election == BRA_2002] <- -21.955
+mani_cses$ideology_party_F[mani_cses$election == BRA_2002] <- -12.53
+mani_cses$ideology_party_B[mani_cses$election == BRA_2002] <- -10.523
+mani_cses$ideology_other_party_1[mani_cses$election == BRA_2002] <- -20.711
+
+
+
+#2006:
+mani_cses$party_ID_B[mani_cses$election == BRA_2006] <- 180230
+mani_cses$other_party_1[mani_cses$election == BRA_2006] <- 180231
+mani_cses$party_ID_C[mani_cses$election == BRA_2006] <- 180310
+
+mani_cses$ideology_party_B[mani_cses$election == BRA_2006] <- -19.005
+mani_cses$ideology_other_party_1[mani_cses$election == BRA_2006] <- -51.128
+mani_cses$ideology_party_C[mani_cses$election == BRA_2006] <- -9.202
+
+#2010:
+mani_cses$other_party_1[mani_cses$election == BRA_2010] <- 180110
+mani_cses$party_ID_A[mani_cses$election == BRA_2010] <- 180230
+mani_cses$party_ID_C[mani_cses$election == BRA_2010] <- 180310
+
+mani_cses$ideology_other_party_1[mani_cses$election == BRA_2010] <- -28.302
+mani_cses$ideology_party_A[mani_cses$election == BRA_2010] <- -13.636
+mani_cses$ideology_party_C[mani_cses$election == BRA_2010] <- -11.302
+
+#2014:
+mani_cses$party_ID_A[mani_cses$election == BRA_2014] <- 180230
+mani_cses$party_ID_E[mani_cses$election == BRA_2014] <- 180240
+mani_cses$party_ID_B[mani_cses$election == BRA_2014] <- 180310
+
+mani_cses$ideology_party_A[mani_cses$election == BRA_2014] <- -12.048
+mani_cses$ideology_party_E[mani_cses$election == BRA_2014] <- -5.394
+mani_cses$ideology_party_B[mani_cses$election == BRA_2014] <- -5.085
+
+
+
 
 ##### INSERINDO EM CSES #####
 
