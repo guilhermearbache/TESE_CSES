@@ -341,3 +341,4 @@ cses$rile_other_11 <- mani_cses$ideology_other_party_11[match(cses$election, man
 cses$rile_other_12 <- mani_cses$ideology_other_party_12[match(cses$election, mani_cses$election)]
 cses$rile_other_13 <- mani_cses$ideology_other_party_13[match(cses$election, mani_cses$election)]
 
+#save(cses, file = "file:///C:/Users/livia/Desktop/TESE_CSES/CSES_w_Manifesto.RData.RData")

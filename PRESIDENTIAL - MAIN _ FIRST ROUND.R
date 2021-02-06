@@ -1,12 +1,14 @@
 #rm(list=ls()[!(ls() %in% c("cses_leg", "cses_pr", "cses"))])
 
-#load("cses.RData")
+#rm(list=ls()[!(ls() %in% c("cses"))])
+
+#load("CSES_w_Manifesto.RData")
 
 
 library(dplyr)
 #library(descr)
 
-load("C:/Users/livia/OneDrive - usp.br/TESE/PROJETO - CSES/INTRO-EDIT/cses.RData")
+# CORRIGIR PARA ARQUIVO NOVO, EM TESE_CSES: load("C:/Users/livia/OneDrive - usp.br/TESE/PROJETO - CSES/INTRO-EDIT/cses.RData")
 
 
 #setwd("C:/Users/livia/OneDrive - usp.br/TESE/PROJETO - CSES/PRESIDENTIAL")
@@ -19,27 +21,37 @@ load("C:/Users/livia/OneDrive - usp.br/TESE/PROJETO - CSES/INTRO-EDIT/cses.RData
 cses_pr <- cses %>% filter (type == 20 | type == 12) %>%
   select (-starts_with("vote_UH"), -starts_with("vote_LH"))
 
+
+# Transformando class das variáveis para poder aplicar case_when e tirando missings
+
+cses_pr <- cses_pr %>%
+  mutate_at(vars(starts_with("ex_ideolparty"), starts_with("ideolparty"), starts_with("vote"),
+                 elected_pr), as.numeric) 
+
+# MISSING
+
+#Creio não ter nenhuma variável com "ideol" no nome além de todas de placement (self, party, leader
+# e suas versões alternativas/expert). Então uso essa palavra para atribuir todos missings dessas:
+
+cses_pr <- cses_pr %>%
+  mutate_at(.vars = vars(contains("ideol")), 
+            .funs = list(~ifelse(. > 10, NA, .)))
+
 ##### CORREÇÕES DE COALIZÕES #####
 
-#ESSA SEÇÃO NÃO É A DIFERENÇA PARA O ARQUIVO ORIGINAL QUE ESTÁ NA PASTA "PROJETO_CSES"
+#ESSA SEÇÃO É A DIFERENÇA PARA O ARQUIVO ANTERIOR (QUE ESTÁ NA PASTA "PROJETO_CSES")
 
-# Antes de ideology_voted e ideology_elected, faço certas correções em pcv, ideology_party e ideology_voted para 
+# Antes de ideology_voted e ideology_elected, faço certas correções em pcv, 
+#ideology_party e ideology_voted para adequar aos partidos que realmente estavam concorrendo na eleição
 
 ##### ARGENTINA #####
 
-#ARG_2015 está codificado como tendo eleito a coalizão (0320002, ou party B). Que não tem em "ideology_party" mas tem 
-#em "ex_ideology_party" .
+#ARG_2015 está codificado como tendo eleito a coalizão (0320002, ou party B). Que não tem em "ideology_party" 
+#mas tem em "ex_ideology_party" .
 
 #Esse país é confuso, porque tem várias etapas de eleição (uma espécie de primárias, com vários candidatos de cada
 #aliança, depois a eleição geral e um possível segundo turno). Tudo aqui parece se referir a essa eleição geral, 
-#os votos são para as alianças participantes. Haviam outras alianças/partidos nas primárias mas não fizeram 1.5%.
-#Talvez se refira a essas primárias (mas são tão poucos votos que nenhum entrevistado votou neles, ou votou em algum
-#que não estava disponíveis nem na base numérica do CSES). Ou pior, alguns responderam pensando nas primárias
-# e outros não. Mas aparentemente é tudo da eleição geral. Tirando o fato de que a proporção de votos 
-#para a coalizão representada por 320001/party_A (Front for the Victory) é muito grande em relação
-#ao que houve na eleição geral (630 votos contra 416 da coalizão de Macri). Seria um pouco mais próximo 
-#da proporção que vimos nas primárias. Nas eleições gerais tivemos 37,08% da Frente para Vitória contra 34,15%
-#do Cambiemos, de Macri. Nas primárias foi 36 vs 28%. 
+#os votos são para as alianças participantes. (Mais observações na planilha). 
 
 #Estratégia: para preservar o que os experts atribuíram a party B, mas não ficar com NA
 #nem em "ideology_voted" para muitos entrevistados, nem em "ideology_elected" para todos, 
@@ -104,32 +116,48 @@ cses_pr <- cses_pr %>% mutate (
   )
 )
 
+# BRASIL 2006 - incluir Heloísa Helena (ideolparty não tem mas ela consta como Leader I):
+# É preciso tomar cuidado - se o Partido I constar em alguma outra coisa, essa alteração de 
+#pcv pode distorcer os dados. Mas aparentemente não há partido I pelo menos em ideolparty e ex_ideolparty)
 
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_F = case_when(
+    election == "BRA_2006" ~ 6.85 ,
+    TRUE          ~ pcv_PR_I
+  )
+)
 
+#2010
 
+cses_pr <- cses_pr %>%
+  mutate(pcv_PR_B = na_if(election, "BRA_2010"))
 
+cses_pr <- cses_pr %>%
+  mutate(pcv_PR_D = na_if(election, "BRA_2010"))
 
-# E a diferença de votos na pop. real para os dados? Isso ai vai ser problema em vários. E deve ter correlação
-#tbm entre eleitores de X, Y e o não-posicionamento ideológico (ou pior, não lembrar em quem votou tbm)
+cses_pr <- cses_pr %>%
+  mutate(pcv_PR_E = na_if(election, "BRA_2010"))
 
+cses_pr <- cses_pr %>%
+  mutate(pcv_PR_F = na_if(election, "BRA_2010"))
 
-#BLR_2001 - tudo independente, e não tem party leaders nem em banco original (módulo 1),
-#Entre os candidatos, só um estava filiado a partido, portanto só para PARTY_D (Liberal Democratic
-#Party) tínhamos dados de ideologia. De 1000l entrevistados, só 23 com dados de ideol_party, e 33
-#com ex_ideolparty (LDP) 
+cses_pr <- cses_pr %>%
+  mutate(pcv_PR_G = na_if(election, "BRA_2010"))
 
-## DROP OU USAR O OPCIONAL DO MODULE 1 (A3035)? # JÁ INSERIR ESSES ADICIONAIS TODOS - VER COMO
-#FAZ PARA INSERIR OS MÓDULOS NO INTRO EDIT OU AQUELE OUTRO ARQUIVO. MAS TEM MUITO MISSING
-#ALÉM DE TUDO, MELHOR DROPAR ESSE PAÍS! 
+cses_pr <- cses_pr %>%
+  mutate(pcv_PR_H = na_if(election, "BRA_2010"))
 
+cses_pr <- cses_pr %>%
+  mutate(pcv_PR_I = na_if(election, "BRA_2010"))
+
+##PAREI DEPOIS DE CHILE (FRANÇA), CONTINUAR A PLANILHA E COLOCANDO AQUI AS ALTERAÇÕES NECESSÁRIAS
+#ATENÇÃO A LEADERS - SE TEM E SE BATE COM AS LETRAS DE PARTIDOS, PARA PCV. DEPOIS PROSSEGUIR
+#NO ARQUIVO "CORREÇÃO PARTIDOS", JUNTA LO AQUI. 
 
 
 ###### IDEOLOGY - PARTY VOTED #####
 
 ### PARA PODER USAR O CASE_WHEN, MUDAR TUDO PARA MESMO TIPO (NUMERIC):
-cses_pr <- cses_pr %>%
-  mutate_at(vars(starts_with("ex_ideolparty"), starts_with("ideolparty"), starts_with("vote"),
-            elected_pr), as.numeric) 
 
 # VOTER PERSPECTIVE 
 
@@ -207,6 +235,7 @@ cses_pr <- cses_pr %>% mutate (
 
 ##### % DE TIPOS DE MISSING EM IDEOLOGIA #####
 
+#PARA ESSA TABELA FUNCIONAR NÃO PODE HAVER A TRANSFORMAÇÃO DE MISSING LÁ EM CIMA 
 ## IDEOLOGY_VOTED (especificando os tipos de MISSING) ##
 
 # cses_pr$ideol_PR_1_ch <- as.character(cses_pr$ideol_voted_PR_1) 
@@ -242,13 +271,9 @@ cses_pr <- cses_pr %>% mutate (
 
 
 
+
+
 ##### LIMPEZA DE VARIÁVEIS E MISSINGS #####
-
-#### LIMPANDO MISSINGS EM IDEOLOGIA (SELF, PARTY VOTED, PARTIDOS):
-
-cses_pr <- cses_pr %>%
-  mutate_at(.vars = vars(contains("ideol")), 
-            .funs = funs(ifelse(. > 90, NA, .)))
 
 ##### TIRANDO ALGUMAS VARIÁVEIS QUE NÃO USAREMOS AGORA:
 
