@@ -14,7 +14,7 @@ library(dplyr)
 #setwd("C:/Users/livia/OneDrive - usp.br/TESE/PROJETO - CSES/PRESIDENTIAL")
 
 
-##### EDIÇÕES INICIAIS #####
+##### EDIÇÕES INICIAIS/ MISSING #####
 
 # FILTRANDO SÓ OS BANCOS/PAÍSES COM ELEIÇÃO PARA PRESIDENTE  
 
@@ -36,6 +36,11 @@ cses_pr <- cses_pr %>%
 cses_pr <- cses_pr %>%
   mutate_at(.vars = vars(contains("ideol")), 
             .funs = list(~ifelse(. > 10, NA, .)))
+
+cses_pr <- cses_pr %>%
+  mutate_at(.vars = vars(contains("vote")), 
+            .funs = list(~ifelse(. >9999900, NA, .)))
+
 
 ##### CORREÇÕES DE COALIZÕES #####
 
@@ -116,7 +121,9 @@ cses_pr <- cses_pr %>% mutate (
   )
 )
 
-# BRASIL 2006 - incluir Heloísa Helena (ideolparty não tem mas ela consta como Leader I):
+##### BRASIL #####
+
+# 2006 - incluir Heloísa Helena (ideolparty não tem mas ela consta como Leader I):
 # É preciso tomar cuidado - se o Partido I constar em alguma outra coisa, essa alteração de 
 #pcv pode distorcer os dados. Mas aparentemente não há partido I pelo menos em ideolparty e ex_ideolparty)
 
@@ -150,10 +157,22 @@ cses_pr <- cses_pr %>%
 cses_pr <- cses_pr %>%
   mutate(pcv_PR_I = na_if(election, "BRA_2010"))
 
-##PAREI DEPOIS DE CHILE (FRANÇA), CONTINUAR A PLANILHA E COLOCANDO AQUI AS ALTERAÇÕES NECESSÁRIAS
-#ATENÇÃO A LEADERS - SE TEM E SE BATE COM AS LETRAS DE PARTIDOS, PARA PCV. DEPOIS PROSSEGUIR
-#NO ARQUIVO "CORREÇÃO PARTIDOS", JUNTA LO AQUI. 
 
+#FRA_2002
+
+# Em todas variáveis (inclusive VOTO), está tudo certo, mas o "elected" ficou 2500001, 
+# Union for a Popular Movement (UMP), que foi o partido que Chirac criou fundindo o seu com outros logo depois.
+#Por isso vamos alterar:
+
+cses_pr <- cses_pr %>% mutate (
+  elected_pr = case_when(
+    election == "FRA_2002" ~ 2500008 ,
+    TRUE          ~ elected_pr
+  )
+)
+
+
+##DEPOIS PROSSEGUIR NO ARQUIVO "CORREÇÃO PARTIDOS", JUNTA LO AQUI. 
 
 ###### IDEOLOGY - PARTY VOTED #####
 
