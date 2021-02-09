@@ -171,6 +171,191 @@ cses_pr <- cses_pr %>% mutate (
   )
 )
 
+#KEN_2013
+
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_G = case_when(
+    election == "KEN_2013" ~ 0.36 ,
+    TRUE          ~ pcv_PR_G
+  )
+)
+
+##### MEXICO #####
+
+#MEX_2000
+
+cses_pr <- cses_pr %>% mutate (
+  elected_pr = case_when(
+    election == "MEX_2000" ~ 4840022 ,
+    TRUE          ~ elected_pr
+  )
+)
+
+#MEX_2006
+
+cses_pr <- cses_pr %>%
+  mutate(pcv_PR_D = na_if(election, "MEX_2006"))
+
+cses_pr <- cses_pr %>%
+  mutate(pcv_PR_E = na_if(election, "MEX_2006"))
+
+cses_pr <- cses_pr %>%
+  mutate(pcv_PR_F = na_if(election, "MEX_2006"))
+
+#Adequar vote_PR_1(estava com códigos numéricos das coalizões nos casos 4840029 (PRI é o cabeça de chapa, 4840001) e 
+#(4840028 - PRD, código 4840003)
+
+
+cses_pr <- cses_pr %>% mutate (
+  vote_PR_1 = case_when(
+    election == "MEX_2006" & vote_PR_1 == 4840029 ~ 4840001 ,
+    TRUE          ~ vote_PR_1
+  )
+)
+
+cses_pr <- cses_pr %>% mutate (
+  vote_PR_1 = case_when(
+    election == "MEX_2006" & vote_PR_1 == 4840028 ~ 4840003 ,
+    TRUE          ~ vote_PR_1
+  )
+)
+
+
+##### PERU #####
+
+#2000 
+#corrigir elected: constava 6040028 (VAMOS VECINO), um dos partidos da coalizão 6040054 (PERU 2000)
+
+cses_pr <- cses_pr %>% mutate (
+  elected_pr = case_when(
+    election == "PER_2000" ~ 6040054 ,
+    TRUE          ~ elected_pr
+  )
+)
+
+
+#PERU 2016
+#INSERIR PCVS
+
+# Popular Force (FP) - PARTY A
+
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_A = case_when(
+    election == "PER_2016" ~ 39.86 ,
+    TRUE          ~ pcv_PR_A
+  )
+)
+
+#PPK - PARTY B
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_B = case_when(
+    election == "PER_2016" ~  21.05 ,
+    TRUE          ~ pcv_PR_B
+  )
+)
+
+#Frente Amplio - PARTY C
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_C = case_when(
+    election == "PER_2016" ~ 18.74 ,
+    TRUE          ~ pcv_PR_C
+  )
+)
+
+#PARTY D não participou das Presidenciais 
+
+#Alianza Popular - PARTY E
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_E = case_when(
+    election == "PER_2016" ~  5.83 ,
+    TRUE          ~ pcv_PR_E
+  )
+)
+
+# ACCION POPULAR - PARTY F
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_F = case_when(
+    election == "PER_2016" ~  6.97 ,
+    TRUE          ~ pcv_PR_F
+  )
+)
+
+#  Direct Democracy - PARTY G
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_G = case_when(
+    election == "PER_2016" ~  4 ,
+    TRUE          ~ pcv_PR_G
+  )
+)
+
+# Possible Peru - PARTY H
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_H = case_when(
+    election == "PER_2016" ~  1.3 ,
+    TRUE          ~ pcv_PR_H
+  )
+)
+
+# Hope Front - PARTY I
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_I = case_when(
+    election == "PER_2016" ~  1.32 ,
+    TRUE          ~ pcv_PR_I
+  )
+)
+
+#PHILIPPINES - 2010
+
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_I = case_when(
+    election == "PHL_2010" ~  0.12 ,
+    TRUE          ~ pcv_PR_I
+  )
+)
+
+
+# ESSES AQUI SÓ ESTÃO EM LEADERS, MAS COMO NÃO PARECE TER IDEOL_PARTIES PARA ELES PODEMOS JÁ INCLUIR AGORA TAMBÉM O PCV:
+
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_G = case_when(
+    election == "PHL_2010" ~  0.15 ,
+    TRUE          ~ pcv_PR_G
+  )
+)
+
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_H = case_when(
+    election == "PHL_2010" ~  0.13 ,
+    TRUE          ~ pcv_PR_H
+  )
+)
+
+
+#ROU_2004
+
+#Voto estava com as alianças
+cses_pr <- cses_pr %>% mutate (
+  vote_PR_1 = case_when(
+    election == "ROU_2004" & vote_PR_1 == 6420026 ~ 6420019 ,
+    TRUE          ~ vote_PR_1
+  )
+)
+
+
+cses_pr <- cses_pr %>% mutate (
+  vote_PR_1 = case_when(
+    election == "ROU_2004" & vote_PR_1 == 6420041 ~ 6420001 ,
+    TRUE          ~ vote_PR_1
+  )
+)
+
+#PCV
+cses_pr <- cses_pr %>%
+  mutate(pcv_PR_B = na_if(election, "ROU_2004"))
+
+cses_pr <- cses_pr %>%
+  mutate(pcv_PR_F = na_if(election, "ROU_2004"))
+
 
 ##DEPOIS PROSSEGUIR NO ARQUIVO "CORREÇÃO PARTIDOS", JUNTA LO AQUI. 
 
