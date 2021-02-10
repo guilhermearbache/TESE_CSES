@@ -1,43 +1,10 @@
 
-#Primeiro : fazer na m„o a correÁ„o de problemas de coaliz„o (corrigir pcv), depois ver os casos que faltam
-#muito - TENTAR ACHAR EM ALGUM OUTRO BANCO ESSES PARTIDOS PARA EXPERTS, FAZER VERS’ES DO BANCO SEM ELES, 
-#ETC. 
-
-cses_pr_adj <- cses_pr
-
-### COME«AR COM ARGENTINA - usar eleiÁıes gerais, passar das prim·rias
-
-# Ver como fazer isso no cÛdigo -  mudar pcv de um partido fazer como abaixo
-
-#Mas e para mudar o "ideol_elected"? Talvez melhor fosse inserir cÛdigo do partido j· em quem 
-#foi eleito (portanto, no banco anterior, j· antes do cÛdigo de "ideol_elected")
-#Ou ver como faz para "if election ARG_2015 , ideol_elected == ideol_partyG
-
-cses_pr_adj$pcv_PR_G[election == "ARG_2015"] <- "Elder"
-
-0320007 REPUBLICAN PROPOSAL party_G
+##### CORRE√á√ÉO PCV - IDEOL #####
 
 
-#INSERIR DADOS PARA SEGUNDO TURNO
+ # TESTAR DE NOVO, SE ESTIVER CERTO JOGAR EM PRESIDENTIAL, DEPOIS DE CRIAR AS VARI√ÅVEIS DE IDEOLOGIA. 
 
-#CRIAR cses_pr S” PAÕSES COM SEGUNDO TURNO
-
-# FAZER UM SUMMARIZE PARA TRABALHAR COM TABELA MENOR
-
-
-#INSERIR DADOS - NA M√O: PCV NO SEGUNDO - COM PCV PRIMEIRO PODERIA CRIAR ALGUM C”DIGO:
-#SCAN COLUMNS PCV_PR, TAKE 2 HIGHER NUMBERS, MATCH COLUMNS IN IDEOLPARTY, EX_IDEOLPARTY corresponding. AÌ teremos
-#as duas ideologias respectivas, e depois ainda teremos o ganhador. - Pergunta Stack? J· sei fazer com closest, 
-# mas e para dois casos? 
-
-
-
-#DAR MATCH PARA INSERIR NO BANCO GERAL OS DADOS
-
-
-
-
-#Depois fazer o cÛdigo abaixo (original do Stack) adaptado para meus dados:
+#Depois fazer o c√≥digo abaixo (original do Stack) adaptado para meus dados, para adaptar ideol_party etc ao que est√° em pcv:
 
 tmp <- mydata %>% 
   mutate(obs = 1:n()) %>% 
@@ -54,12 +21,8 @@ tmp <- mydata %>%
 names(tmp) <- gsub("vals_", "", names(tmp))
 
 
-
-cses_pr_adj <- cses_pr
-
-
-#Vari·vel base - % vote
-#vari·veis a criar novas versıes: ideol_party, ex_ideol_party, que mais?
+#Vari√°vel base - % vote
+#vari√°veis a criar novas vers√µes: ideol_party, ex_ideol_party, que mais? S√ì 
 
 
 
@@ -91,8 +54,46 @@ names(cses_pr_adj) <- gsub("vals_", "", names(cses_pr_adj))
 ## FUNCIONOU! Terminar de conferir com planilha, 
 
 
-library(haven)
-bcs92 = read_spss("C:/Users/livia/OneDrive - usp.br/TESE/RAW DATASETS/BCS_1992/BCS_1992_Data.por")
+
+
+
+##### SEGUNDO TURNO #####
+
+
+#INSERIR DADOS PARA SEGUNDO TURNO
+
+#CRIAR cses_pr S√ì PA√çSES COM SEGUNDO TURNO
+
+#CRIAR AS VARI√ÅVEIS - PCV_2???
+
+#SRB_2012
+cses_pr <- cses_pr %>% mutate (
+  pcv_2_A = case_when(
+    election == "SRB_2012" ~  49.54 ,
+    TRUE          ~ pcv_2_A 
+  )
+)
+
+cses_pr <- cses_pr %>% mutate (
+  pcv_2_B = case_when(
+    election == "SRB_2012" ~  47.31 ,
+    TRUE          ~ pcv_2_B
+  )
+)
+
+
+
+#INSERIR DADOS - NA M√ÉO: PCV NO SEGUNDO - COM PCV PRIMEIRO PODERIA CRIAR ALGUM C√ìDIGO:
+#SCAN COLUMNS PCV_PR, TAKE 2 HIGHER NUMBERS, MATCH COLUMNS IN IDEOLPARTY, EX_IDEOLPARTY corresponding. A√≠ teremos
+#as duas ideologias respectivas, e depois ainda teremos o ganhador. - Pergunta Stack? J√° sei fazer com closest, 
+# mas e para dois casos? 
+
+#A√ç DAR MATCH PARA INSERIR NO BANCO GERAL OS DADOS  (DE "TAB CSES PARA CSES") 
+
+#OU S√ì J√Å INSERIR NA M√ÉO MESMO? CONFORME ACIMA? 
+
+
+
 
 
 
@@ -103,8 +104,9 @@ df <- data.frame(a=1:50, b=rnorm(50), c=rpois(50, 10))
 set.seed(1234)
 df <- data.frame(id=paste0(letters[-1], 1:40), matrix(rnorm(25000L, 5L, 10L), 1000L))
 
-#Temos system_PR para tipo de Presidencial mas isso n„o ajuda muito, precisamos criar dummy
-#para segundo turno e preencher na m„o ou sÛ filtrar os paÌses com segundo turno
+#Temos system_PR para tipo de Presidencial mas isso n√£o ajuda muito, precisamos criar dummy
+#para segundo turno e preencher na m√£o ou s√≥ filtrar os pa√≠ses com segundo turno - J√Å CRIEI ISSO NA M√ÉO NO EXCEL, VER DE PASSAR
+#COM MATCH 
 
 cses_pr2 <- cses_pr %>% filter (system_PR)
 
@@ -113,6 +115,10 @@ group_by(election, country) %>%
 summarize_all (.funs = c(mean="mean"), na.rm = T)
  
 
-# SELECIONAR AS VARI¡VEIS DE IDEOLOGIA, PCV, E CRIAR COM DPUT- 9 rows mesm?
+# SELECIONAR AS VARI√ÅVEIS DE IDEOLOGIA, PCV, E CRIAR COM DPUT- 9 rows mesm?
 
 # fazer a pergunta
+
+
+library(haven)
+bcs92 = read_spss("C:/Users/livia/OneDrive - usp.br/TESE/RAW DATASETS/BCS_1992/BCS_1992_Data.por")

@@ -331,6 +331,8 @@ cses_pr <- cses_pr %>% mutate (
 )
 
 
+##### ROMANIA #####
+
 #ROU_2004
 
 #Voto estava com as alianças
@@ -357,7 +359,143 @@ cses_pr <- cses_pr %>%
   mutate(pcv_PR_F = na_if(election, "ROU_2004"))
 
 
-##DEPOIS PROSSEGUIR NO ARQUIVO "CORREÇÃO PARTIDOS", JUNTA LO AQUI. 
+
+#ROU_2014
+
+#INSERIR PERCENT VOTES:
+
+# 6420101. PSD-UNPR-PC Electoral Alliance 
+
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_A = case_when(
+    election == "ROU_2014" ~  40.44 ,
+    TRUE          ~ pcv_PR_A
+  )
+)
+
+# 6420102. Christian-Liberal Alliance (ACL): 
+
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_B = case_when(
+    election == "ROU_2014" ~  30.37 ,
+    TRUE          ~ pcv_PR_B
+  )
+)
+
+# 6420103. Popular Movement Party (PMP) 
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_C = case_when(
+    election == "ROU_2014" ~  5.20 ,
+    TRUE          ~ pcv_PR_C
+  )
+)
+
+#6420002. People's Party - Dan Diaconescu (PP-DD) 
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_D = case_when(
+    election == "ROU_2014" ~  4.03 ,
+    TRUE          ~ pcv_PR_D
+  )
+)
+
+# 6420004. Greater Romania Party (PRM)
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_E = case_when(
+    election == "ROU_2014" ~  3.68 ,
+    TRUE          ~ pcv_PR_E
+  )
+)
+
+# 6420003. Dem. Union of Hungarians in Romania (UDMR)
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_F = case_when(
+    election == "ROU_2014" ~  3.47 ,
+    TRUE          ~ pcv_PR_F
+  )
+)
+
+#INDEPENDENTES (para serem considerados em "Expert")
+
+#Popescu-Tariceanu Calin-Constantin-Anton
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_H = case_when(
+    election == "ROU_2014" ~  5.36 ,
+    TRUE          ~ pcv_PR_H
+  )
+)
+
+#Monica Macovei
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_I = case_when(
+    election == "ROU_2014" ~  4.44 ,
+    TRUE          ~ pcv_PR_I
+  )
+)
+
+
+##### SRB_2012 #####
+
+#Inserindo Percent of Votes:
+
+#  Tomislav Nikolic - (SNS)	Let's Get Serbia Moving	25.05%
+
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_A = case_when(
+    election == "SRB_2012" ~  25.05 ,
+    TRUE          ~ pcv_PR_A
+  )
+)
+
+# Boris Tadic	Choice for a Better Life - 25.31% 
+
+
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_B = case_when(
+    election == "SRB_2012" ~  25.31 ,
+    TRUE          ~ pcv_PR_B
+  )
+)
+
+# Ivica Dacic-	Socialist Party of Serbia (SPS) -	14.23%	
+
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_C = case_when(
+    election == "SRB_2012" ~  14.23 ,
+    TRUE          ~ pcv_PR_C
+  )
+)
+
+# Democratic Party of Serbia -	7.44%
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_D = case_when(
+    election == "SRB_2012" ~  7.44 ,
+    TRUE          ~ pcv_PR_D
+  )
+)
+
+#	U-Turn coalition (ALSO CALLED "TURNOVER")	-	5.03%
+
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_E = case_when(
+    election == "SRB_2012" ~  5.03 ,
+    TRUE          ~ pcv_PR_E
+  )
+)
+
+# United Regions of Serbia -	6.58%
+
+cses_pr <- cses_pr %>% mutate (
+  pcv_PR_F = case_when(
+    election == "SRB_2012" ~  6.58 ,
+    TRUE          ~ pcv_PR_F
+  )
+)
+
+# Alliance of Vojvodina Hungarians - 1.62%
+
+cses_pr <- cses_pr %>% mutate (pcv_PR_H = case_when(election == "SRB_2012" ~  1.62 ,
+    TRUE ~ pcv_PR_H)) 
+    
 
 ###### IDEOLOGY - PARTY VOTED #####
 
