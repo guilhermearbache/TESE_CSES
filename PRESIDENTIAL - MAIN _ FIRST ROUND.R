@@ -1,6 +1,6 @@
 #rm(list=ls()[!(ls() %in% c("cses_leg", "cses_pr", "cses"))])
 
-#rm(list=ls()[!(ls() %in% c("cses"))])
+rm(list=ls()[!(ls() %in% c("cses"))])
 
 #load("CSES_w_Manifesto.RData")
 
@@ -19,14 +19,15 @@ library(dplyr)
 # FILTRANDO SÓ OS BANCOS/PAÍSES COM ELEIÇÃO PARA PRESIDENTE  
 
 cses_pr <- cses %>% filter (type == 20 | type == 12) %>%
-  select (-starts_with("vote_UH"), -starts_with("vote_LH"))
+  select ( -contains("UH"), - contains("LH"))
 
 
-# Transformando class das variáveis para poder aplicar case_when e tirando missings
+
+#Transformando class das variáveis para poder aplicar case_when e tirando missings
 
 cses_pr <- cses_pr %>%
   mutate_at(vars(starts_with("ex_ideolparty"), starts_with("ideolparty"), starts_with("vote"),
-                 elected_pr), as.numeric) 
+                 starts_with("pcv"), elected_pr), as.numeric) 
 
 # MISSING
 
@@ -128,35 +129,25 @@ cses_pr <- cses_pr %>% mutate (
 #pcv pode distorcer os dados. Mas aparentemente não há partido I pelo menos em ideolparty e ex_ideolparty)
 
 cses_pr <- cses_pr %>% mutate (
-  pcv_PR_F = case_when(
+  pcv_PR_I = case_when(
     election == "BRA_2006" ~ 6.85 ,
     TRUE          ~ pcv_PR_I
   )
 )
 
-#2010
+#2010 - SÓ TEMOS PT (party_A) e PSDB (party_C), entre os concorrentes da eleição, nas letras e respectivos dados de ideologia. 
 
-cses_pr <- cses_pr %>%
-  mutate(pcv_PR_B = na_if(election, "BRA_2010"))
+#Mas eles aparecem repetidos em % votes para outras letras com quem fizeram coalizões. Retirando esses valores:
 
-cses_pr <- cses_pr %>%
-  mutate(pcv_PR_D = na_if(election, "BRA_2010"))
+cses_pr$pcv_PR_B[cses_pr$election == "BRA_2010"] <- NA
+cses_pr$pcv_PR_D[cses_pr$election == "BRA_2010"] <- NA
+cses_pr$pcv_PR_E[cses_pr$election == "BRA_2010"] <- NA
+cses_pr$pcv_PR_F[cses_pr$election == "BRA_2010"] <- NA
+cses_pr$pcv_PR_G[cses_pr$election == "BRA_2010"] <- NA
+cses_pr$pcv_PR_H[cses_pr$election == "BRA_2010"] <- NA
+cses_pr$pcv_PR_I[cses_pr$election == "BRA_2010"] <- NA
 
-cses_pr <- cses_pr %>%
-  mutate(pcv_PR_E = na_if(election, "BRA_2010"))
-
-cses_pr <- cses_pr %>%
-  mutate(pcv_PR_F = na_if(election, "BRA_2010"))
-
-cses_pr <- cses_pr %>%
-  mutate(pcv_PR_G = na_if(election, "BRA_2010"))
-
-cses_pr <- cses_pr %>%
-  mutate(pcv_PR_H = na_if(election, "BRA_2010"))
-
-cses_pr <- cses_pr %>%
-  mutate(pcv_PR_I = na_if(election, "BRA_2010"))
-
+  
 
 #FRA_2002
 
@@ -175,8 +166,8 @@ cses_pr <- cses_pr %>% mutate (
 
 cses_pr <- cses_pr %>% mutate (
   pcv_PR_G = case_when(
-    election == "KEN_2013" ~ 0.36 ,
-    TRUE          ~ pcv_PR_G
+    election == "KEN_2013" ~ 0.36,
+    TRUE      ~ pcv_PR_G
   )
 )
 
@@ -193,14 +184,12 @@ cses_pr <- cses_pr %>% mutate (
 
 #MEX_2006
 
-cses_pr <- cses_pr %>%
-  mutate(pcv_PR_D = na_if(election, "MEX_2006"))
+cses_pr$pcv_PR_D[cses_pr$election == "MEX_2006"] <- NA
 
-cses_pr <- cses_pr %>%
-  mutate(pcv_PR_E = na_if(election, "MEX_2006"))
+cses_pr$pcv_PR_E[cses_pr$election == "MEX_2006"] <- NA
 
-cses_pr <- cses_pr %>%
-  mutate(pcv_PR_F = na_if(election, "MEX_2006"))
+cses_pr$pcv_PR_F[cses_pr$election == "MEX_2006"] <- NA
+
 
 #Adequar vote_PR_1(estava com códigos numéricos das coalizões nos casos 4840029 (PRI é o cabeça de chapa, 4840001) e 
 #(4840028 - PRD, código 4840003)
@@ -352,12 +341,9 @@ cses_pr <- cses_pr %>% mutate (
 )
 
 #PCV
-cses_pr <- cses_pr %>%
-  mutate(pcv_PR_B = na_if(election, "ROU_2004"))
 
-cses_pr <- cses_pr %>%
-  mutate(pcv_PR_F = na_if(election, "ROU_2004"))
-
+cses_pr$pcv_PR_B[cses_pr$election == "ROU_2004"] <- NA
+cses_pr$pcv_PR_F[cses_pr$election == "ROU_2004"] <- NA
 
 
 #ROU_2014
@@ -619,11 +605,14 @@ cses_pr <- cses_pr %>% mutate (
 
 ##### TIRANDO ALGUMAS VARIÁVEIS QUE NÃO USAREMOS AGORA:
 
-cses_pr <- cses_pr %>% select (-starts_with("numparty"), -starts_with("prevote"), 
-                               -contains("UH"), - contains("LH"), -contains("ch"))
+#cses_pr <- cses_pr %>% select (-starts_with("numparty"), -starts_with("prevote"), 
+ #                              -contains("UH"), - contains("LH"), -contains("ch"))
 
 
 ##### CLOSEST PARTY - Voter Perspective#####
+
+
+
 
 cols <- grep("^ideolparty", names(cses_pr))
 
