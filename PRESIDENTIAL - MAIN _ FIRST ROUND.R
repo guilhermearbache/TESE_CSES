@@ -32,11 +32,13 @@ cses_pr <- cses_pr %>%
 # MISSING
 
 #Creio não ter nenhuma variável com "ideol" no nome além de todas de placement (self, party, leader
-# e suas versões alternativas/expert). Então uso essa palavra para atribuir todos missings dessas:
+# e suas versões alternativas/expert) E IDEOL_FAMILY (que tem valores não-missing até
+#26 segundo o Codebook IMD). Então uso essa palavra para atribuir todos missings dessas:
+
 
 cses_pr <- cses_pr %>%
   mutate_at(.vars = vars(contains("ideol")), 
-            .funs = list(~ifelse(. > 10, NA, .)))
+            .funs = list(~ifelse(. > 50, NA, .)))
 
 cses_pr <- cses_pr %>%
   mutate_at(.vars = vars(contains("vote")), 
@@ -611,11 +613,9 @@ cses_pr <- cses_pr %>% mutate (
 
 ##### CLOSEST PARTY - Voter Perspective#####
 
-
-
+cses_pr <- data.frame(cses_pr)
 
 cols <- grep("^ideolparty", names(cses_pr))
-
 temp_df <- -abs(cses_pr[cols] - cses_pr$ideol_self)
 cses_pr$closest <- cses_pr[cols][cbind(1:nrow(cses_pr), 
                                        max.col(replace(temp_df, is.na(temp_df), -Inf)))]
@@ -701,10 +701,23 @@ cses_pr <- cses_pr %>%
 
 
 
+#REDUZINDO VARIÁVEIS E ORGANIZANDO NUMA ORDEM MELHOR
+# Posso usar essa lista para outras seleções inclusive no Legislativo (MAS TOMAR CUIDADO COM DOIS PONTOS,
+#PODE PEGAR COISA QUE NÃO ESTAVA NO MEIO ORIGINALMENTE, que não se pretendia pegar)
+
+csespr_ad <- cses_pr %>% select(ID,	election,	country, module, type, system_PR,  #MAIN DATA ON EACH ELECTION
+                                vote_PR_1,	vote_PR_2, ideol_self, starts_with("ideolparty"),      #IDEOLOGY
+                                starts_with("ex_ideolparty"), starts_with("ideol_leader"),
+                                alt_ideol_self, starts_with ("alt_ideol_party"),
+                                starts_with ("exp_alt_ideol_party"), starts_with("alt_ideol_leader"),
+                                ideol_voted_PR_1:voted_exp_closest_PR_1, #IDEOLOGY - CREATED 
+                                starts_with("family_ideol"), starts_with("rile"),
+                                elected_pr, pcv_PR_A:pcv_PR_I, 
+                                compulsory, regime_age:CENPP, fh_civil:dalton_pol, # INSTITUTIONS
+                                GDP_1:GDP_3, cum_gdp,	abs_growth,	cum_gdp2,	abs_growth2, # ECONOMY
+                                education, knowledge, knowledge_adj, efficacy,  #INDIVIDUAL
+                                effic_vote, economy_1:IMD3015_D)  
 
 
-
-
-#####
 
 save(cses_pr, file = "cses_pr.Rdata")
