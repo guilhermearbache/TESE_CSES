@@ -611,6 +611,62 @@ cses_pr <- cses_pr %>% mutate (
  #                              -contains("UH"), - contains("LH"), -contains("ch"))
 
 
+
+#REDUZINDO VARIÁVEIS E ORGANIZANDO NUMA ORDEM MELHOR
+# Posso usar essa lista para outras seleções inclusive no Legislativo (MAS TOMAR CUIDADO COM DOIS PONTOS,
+#PODE PEGAR COISA QUE NÃO ESTAVA NO MEIO ORIGINALMENTE, que não se pretendia pegar)
+
+csespr_adj <- cses_pr %>% select(ID,	election,	country, module, type, system_PR,  #MAIN DATA ON EACH ELECTION
+                                 vote_PR_1,	vote_PR_2, ideol_self, starts_with("ideolparty"),      #IDEOLOGY
+                                 starts_with("ex_ideolparty"), starts_with("ideol_leader"),
+                                 alt_ideol_self, starts_with ("alt_ideol_party"),
+                                 starts_with ("exp_alt_ideol_party"), starts_with("alt_ideol_leader"),
+                                 #ideol_voted_PR_1:voted_exp_closest_PR_1, #IDEOLOGY - CREATED 
+                                 starts_with("family_ideol"), starts_with("rile"),
+                                 elected_pr, pcv_PR_A:pcv_PR_I, 
+                                 compulsory, regime_age:CENPP, fh_civil:dalton_pol, # INSTITUTIONS
+                                 GDP_1:GDP_3, cum_gdp,	abs_growth,	cum_gdp2,	abs_growth2, # ECONOMY
+                                 education, knowledge, knowledge_adj, efficacy,  #INDIVIDUAL
+                                 effic_vote, economy_1:IMD3015_D)  
+
+##### CORREÇÃO PCV - IDEOL #####
+
+csespr_adj <- cses_pr
+
+#COM FUNÇÃO GREP IDENTIFICAMOS O Nº DAS COLUNAS COM AS VARIÁVEIS RESPECTIVAS
+
+pcvcols <- grep("^pcv", names(csespr_adj))
+
+#RECODIFICANDO - CITIZEN PLACEMENT: 
+partycols <- grep("^ideolparty", names(csespr_adj))
+csespr_adj[partycols][is.na(csespr_adj[pcvcols])] <- NA
+
+#EXPERT PLACEMENT:
+ex_partycols <- grep("^ex_ideolparty", names(csespr_adj))
+csespr_adj[ex_partycols][is.na(csespr_adj[pcvcols])] <- NA
+
+#LEADERS
+leadercols <- grep("^ideol_leader", names(csespr_adj))
+csespr_adj[leadercols][is.na(csespr_adj[pcvcols])] <- NA
+
+#ALTERNATIVE SCALE (TEM 3?):
+
+altpartycols <- grep("^alt_ideolparty", names(csespr_adj))
+csespr_adj[altpartycols][is.na(csespr_adj[pcvcols])] <- NA
+
+exp_altcols <- grep("^exp_alt_ideolparty", names(csespr_adj))
+csespr_adj[exp_altcols][is.na(csespr_adj[pcvcols])] <- NA
+
+altleadercols <- grep("^alt_ideol_leader", names(csespr_adj))
+csespr_adj[altleadercols][is.na(csespr_adj[pcvcols])] <- NA
+
+
+
+
+
+##### CLOSEST #####
+
+
 ##### CLOSEST PARTY - Voter Perspective#####
 
 cses_pr <- data.frame(cses_pr)
@@ -701,22 +757,6 @@ cses_pr <- cses_pr %>%
 
 
 
-#REDUZINDO VARIÁVEIS E ORGANIZANDO NUMA ORDEM MELHOR
-# Posso usar essa lista para outras seleções inclusive no Legislativo (MAS TOMAR CUIDADO COM DOIS PONTOS,
-#PODE PEGAR COISA QUE NÃO ESTAVA NO MEIO ORIGINALMENTE, que não se pretendia pegar)
-
-csespr_ad <- cses_pr %>% select(ID,	election,	country, module, type, system_PR,  #MAIN DATA ON EACH ELECTION
-                                vote_PR_1,	vote_PR_2, ideol_self, starts_with("ideolparty"),      #IDEOLOGY
-                                starts_with("ex_ideolparty"), starts_with("ideol_leader"),
-                                alt_ideol_self, starts_with ("alt_ideol_party"),
-                                starts_with ("exp_alt_ideol_party"), starts_with("alt_ideol_leader"),
-                                ideol_voted_PR_1:voted_exp_closest_PR_1, #IDEOLOGY - CREATED 
-                                starts_with("family_ideol"), starts_with("rile"),
-                                elected_pr, pcv_PR_A:pcv_PR_I, 
-                                compulsory, regime_age:CENPP, fh_civil:dalton_pol, # INSTITUTIONS
-                                GDP_1:GDP_3, cum_gdp,	abs_growth,	cum_gdp2,	abs_growth2, # ECONOMY
-                                education, knowledge, knowledge_adj, efficacy,  #INDIVIDUAL
-                                effic_vote, economy_1:IMD3015_D)  
 
 
 
