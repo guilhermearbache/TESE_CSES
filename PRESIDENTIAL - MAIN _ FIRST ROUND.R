@@ -631,34 +631,36 @@ csespr_adj <- cses_pr %>% select(ID,	election,	country, module, type, system_PR,
 
 ##### CORREÇÃO PCV - IDEOL #####
 
-csespr_adj <- cses_pr
+cses_pr_noadj <- cses_pr
+
+#CRIEI um banco alternativo para se precisar usar as variáveis de ideologia sem as correções abaixo! 
 
 #COM FUNÇÃO GREP IDENTIFICAMOS O Nº DAS COLUNAS COM AS VARIÁVEIS RESPECTIVAS
 
-pcvcols <- grep("^pcv", names(csespr_adj))
+pcvcols <- grep("^pcv", names(cses_pr))
 
 #RECODIFICANDO - CITIZEN PLACEMENT: 
-partycols <- grep("^ideolparty", names(csespr_adj))
-csespr_adj[partycols][is.na(csespr_adj[pcvcols])] <- NA
+partycols <- grep("^ideolparty", names(cses_pr))
+cses_pr[partycols][is.na(cses_pr[pcvcols])] <- NA
 
 #EXPERT PLACEMENT:
-ex_partycols <- grep("^ex_ideolparty", names(csespr_adj))
-csespr_adj[ex_partycols][is.na(csespr_adj[pcvcols])] <- NA
+ex_partycols <- grep("^ex_ideolparty", names(cses_pr))
+cses_pr[ex_partycols][is.na(cses_pr[pcvcols])] <- NA
 
 #LEADERS
-leadercols <- grep("^ideol_leader", names(csespr_adj))
-csespr_adj[leadercols][is.na(csespr_adj[pcvcols])] <- NA
+leadercols <- grep("^ideol_leader", names(cses_pr))
+cses_pr[leadercols][is.na(cses_pr[pcvcols])] <- NA
 
 #ALTERNATIVE SCALE (TEM 3?):
 
-altpartycols <- grep("^alt_ideolparty", names(csespr_adj))
-csespr_adj[altpartycols][is.na(csespr_adj[pcvcols])] <- NA
+altpartycols <- grep("^alt_ideolparty", names(cses_pr))
+cses_pr[altpartycols][is.na(cses_pr[pcvcols])] <- NA
 
-exp_altcols <- grep("^exp_alt_ideolparty", names(csespr_adj))
-csespr_adj[exp_altcols][is.na(csespr_adj[pcvcols])] <- NA
+exp_altcols <- grep("^exp_alt_ideolparty", names(cses_pr))
+cses_pr[exp_altcols][is.na(cses_pr[pcvcols])] <- NA
 
-altleadercols <- grep("^alt_ideol_leader", names(csespr_adj))
-csespr_adj[altleadercols][is.na(csespr_adj[pcvcols])] <- NA
+altleadercols <- grep("^alt_ideol_leader", names(cses_pr))
+cses_pr[altleadercols][is.na(cses_pr[pcvcols])] <- NA
 
 
 
