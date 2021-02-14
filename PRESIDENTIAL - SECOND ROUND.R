@@ -9,27 +9,100 @@
 #cses_pr2 <- cses_pr % filter
 
 
-##### DETERMINAR OS 2 PARTIDOS QUE FORAM ##### 
-
-# COMO PODERIA USAR UM CÓDIGO PARA OS 2 MAIORES % VOTES, OU FAZER NA MÃO O PCV DELES DE SEGUNDO TURNO - MELHOR FAZER ISSO JÁ USAR PARA 
-#EMD!!!! 
-
-
-
+##### INSERINDO DADOS DOS 2 PARTIDOS QUE FORAM ##### 
 
 #CRIAR AS VARIÁVEIS - PCV_2???
 
 #ARG_2015
-cses_pr$pcv_PR2_A[cses_pr$election == "ARG_2015"] <- 48.66
-cses_pr$pcv_PR2_B[cses_pr$election == "ARG_2015"] <- 51.34
+cses_pr$pcv_2PR_A[cses_pr$election == "ARG_2015"] <- 48.66
+cses_pr$pcv_2PR_B[cses_pr$election == "ARG_2015"] <- 51.34
 
 #BRA_2002
-cses_pr$pcv_PR2_A[cses_pr$election == "BRA_2002"] <- 61.27
-cses_pr$pcv_PR2_B[cses_pr$election == "BRA_2002"] <- 38.73
+cses_pr$pcv_2PR_A[cses_pr$election == "BRA_2002"] <- 61.27
+cses_pr$pcv_2PR_B[cses_pr$election == "BRA_2002"] <- 38.73
   
 
 #BRA_2006
+cses_pr$pcv_2PR_B[cses_pr$election == "BRA_2006"] <- 60.83
+cses_pr$pcv_2PR_C[cses_pr$election == "BRA_2006"] <- 39.17
 
+#BRA_2010
+cses_pr$pcv_2PR_A[cses_pr$election == "BRA_2010"] <- 56.05
+cses_pr$pcv_2PR_C[cses_pr$election == "BRA_2010"] <- 43.95
+
+#BRA_2014
+cses_pr$pcv_2PR_A[cses_pr$election == "BRA_2014"] <- 51.64
+cses_pr$pcv_2PR_B[cses_pr$election == "BRA_2014"] <- 48.36
+
+#CHL_1999
+cses_pr$pcv_2PR_A[cses_pr$election == "CHL_1999"] <- 51.31
+cses_pr$pcv_2PR_B[cses_pr$election == "CHL_1999"] <- 48.69
+
+#CHL_2005
+cses_pr$pcv_2PR_E[cses_pr$election == "CHL_2005"] <- 53.5
+cses_pr$pcv_2PR_D[cses_pr$election == "CHL_2005"] <- 46.5
+
+
+#CHL_2009
+cses_pr$pcv_2PR_B[cses_pr$election == "CHL_2009"] <- 51.61
+cses_pr$pcv_2PR_C[cses_pr$election == "CHL_2009"] <- 48.39
+
+#FRA_2002
+cses_pr$pcv_2PR_A[cses_pr$election == "FRA_2002"] <- 82.21
+cses_pr$pcv_2PR_B[cses_pr$election == "FRA_2002"] <- 17.79
+
+
+#FRA_2012
+cses_pr$pcv_2PR_A[cses_pr$election == "FRA_2012"] <- 51.6
+cses_pr$pcv_2PR_B[cses_pr$election == "FRA_2012"] <- 48.4
+
+
+#PER_2000
+cses_pr$pcv_2PR_A[cses_pr$election == "PER_2000"] <- 74.33
+cses_pr$pcv_2PR_B[cses_pr$election == "PER_2000"] <- 25.67
+
+#PER_2001
+cses_pr$pcv_2PR_A[cses_pr$election == "PER_2001"] <- 53.08
+cses_pr$pcv_2PR_B[cses_pr$election == "PER_2001"] <- 46.92
+
+# PER_2006
+cses_pr$pcv_2PR_A[cses_pr$election == "PER_2006"] <- 47.37
+cses_pr$pcv_2PR_B[cses_pr$election == "PER_2006"] <- 52.63
+
+
+# PER_2011
+cses_pr$pcv_2PR_A[cses_pr$election == "PER_2011"] <- 51.45
+cses_pr$pcv_2PR_B[cses_pr$election == "PER_2011"] <- 48.55
+
+
+# PER_2016
+cses_pr$pcv_2PR_B[cses_pr$election == "PER_2016"] <- 50.1
+cses_pr$pcv_2PR_A[cses_pr$election == "PER_2016"] <- 49.9
+
+# ROU_1996
+cses_pr$pcv_2PR_A[cses_pr$election == "ROU_1996"] <- 54.4
+cses_pr$pcv_2PR_B[cses_pr$election == "ROU_1996"] <- 45.6
+
+# ROU_2004
+
+# COMO NOS DADOS DE PRIMEIRO TURNO, AQUI TAMBÉM PRECISAMOS ADEQUAR VOTE aos códigos numéricos
+#dos PARTIDOS, não das alianças:
+
+cses_pr$vote_PR_2[cses_pr$election == "ROU_2004" & cses_pr$vote_PR_2 == 6420026] <- 6420019
+cses_pr$vote_PR_2[cses_pr$election == "ROU_2004" & cses_pr$vote_PR_2 == 6420041] <- 6420001
+
+#Agora sim, % of votes:
+
+cses_pr$pcv_2PR_A[cses_pr$election == "ROU_2004"] <- 48.8  #PSD - Party of Social Democracy 
+cses_pr$pcv_2PR_C[cses_pr$election == "ROU_2004"] <- 51.2   #PD - Democratic Party 
+
+# ROU_2009
+cses_pr$pcv_2PR_A[cses_pr$election == "ROU_2009"] <- 50.33
+cses_pr$pcv_2PR_B[cses_pr$election == "ROU_2009"] <- 49.67
+
+# ROU_2014
+cses_pr$pcv_2PR_A[cses_pr$election == "ROU_2014"] <- 45.56
+cses_pr$pcv_2PR_B[cses_pr$election == "ROU_2014"] <- 54.43
 
 
 #SRB_2012
@@ -48,7 +121,9 @@ cses_pr <- cses_pr %>% mutate (
 )
 
 
-
+# URY_2009
+cses_pr$pcv_2PR_A[cses_pr$election == "URY_2009"] <- 54.63
+cses_pr$pcv_2PR_B[cses_pr$election == "URY_2009"] <- 45.37 
 
 
 
