@@ -85,14 +85,30 @@ load("C:/Users/livia/Desktop/TESE_CSES/cses_add.rdata")
 ###### CODIFICAÇÃO DE VARIÁVEIS ##### 
 # MISSINGS e alguns ajustes
 
-##### EDUCATION 
+##### AGE #####
+ cses <- cses %>%
+   mutate_at(.vars = vars(age), 
+             .funs = list(~ifelse(. > 9000, NA, .)))
 
- #ATRIBUIR PARA MISSING TODOS VALORES 9,7, 8 e 6 = OTHER (alguns casos de BEL 2003 E DEU12002, pelo que vi eram 9=OTHER 
+##### INCOME #####
+ cses <- cses %>%
+   mutate_at(.vars = vars(income), 
+             .funs = list(~ifelse(. > 5, NA, .)))
+ 
+##### RURAL/ EDUCATION #####
+ cses <- cses %>%
+   mutate_at(.vars = vars(rural, education), 
+             .funs = list(~ifelse(. > 4, NA, .)))
+ 
+##### RELIGION #####
+ cses <- cses %>%
+   mutate_at(.vars = vars(religion), 
+             .funs = list(~ifelse(. > 90, NA, .)))
+ 
+
+# EDUCATION - ATRIBUIR PARA MISSING TODOS VALORES 9,7, 8 e 6 = OTHER (alguns casos de BEL 2003 E DEU12002, pelo que vi eram 9=OTHER 
 # no banco original, CSES 2)
 
-cses <- cses %>%
-   mutate_at(.vars = vars(education), 
-             .funs = list(~ifelse(. > 4, NA, .)))
 
 ##### KNOWLEDGE #####
 
@@ -263,15 +279,8 @@ cses$dalton_pol <- polariz$Polarization[match(cses$cyear, polariz$cyear)]
 
 
 
-
-#SALVAR BANCOS FINAIS (CSES_LEG E CSES_PR) E DEPOIS NO INÍCIO DAS ANÁLISES DAR UMA LIMPADA NELES
-#E MANTER SÓ O BANCO LIMPO
-
-
-
 save(cses, file = "cses.RData")
 
-#####
 
 #tab_cses <- 
  # tab_cses %>%

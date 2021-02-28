@@ -14,16 +14,43 @@ library(dplyr)
 #setwd("C:/Users/livia/OneDrive - usp.br/TESE/PROJETO - CSES/PRESIDENTIAL")
 
 
-##### EDIÇÕES INICIAIS/ MISSING #####
+##### EDIÇÕES INICIAIS #####
 
-# FILTRANDO SÓ OS BANCOS/PAÍSES COM ELEIÇÃO PARA PRESIDENTE  
+# FILTRANDO SÓ OS BANCOS/PAÍSES COM ELEIÇÃO PARA PRESIDENTE, ORGANIZANDO ORDEM DAS COLUNAS E SELECIONANDO VARIÁVEIS 
+
 
 cses_pr <- cses %>% filter (type == 20 | type == 12) %>%
-  select ( -contains("UH"), - contains("LH"))
+  select(ID,	election,	country, module, type, system_PR,  #MAIN DATA ON EACH ELECTION
+                        vote_PR_1,	vote_PR_2, ideol_self, starts_with("ideolparty"),      #IDEOLOGY
+                        starts_with("ex_ideolparty"), starts_with("ideol_leader"),
+                        alt_ideol_self, starts_with ("alt_ideolparty"),
+                        starts_with ("exp_alt_ideolparty"), starts_with("alt_ideol_leader"),
+                        #ideol_voted_PR_1:voted_exp_closest_PR_1, #IDEOLOGY - CREATED 
+                        starts_with("family_ideol"), rile_A:rile_I, 
+                        rile_other_1:rile_other_4, # a partir de rile_other_5 nenhum dado nesses países
+                        elected_pr, pcv_PR_A:pcv_PR_I, 
+                        compulsory, regime_age:CENPP, fh_civil:dalton_pol, # INSTITUTIONS
+                        GDP_1:GDP_3, cum_gdp,	abs_growth,	cum_gdp2,	abs_growth2, # ECONOMY
+                        education, knowledge, knowledge_adj, efficacy, 
+                        age, gender, rural, income,   #INDIVIDUAL
+                        effic_vote, economy_1:IMD3015_D,
+                        numparty_A:numparty_I)  
 
 
 
-#Transformando class das variáveis para poder aplicar case_when e tirando missings
+##### MISSING #####
+
+cses_pr <- cses_pr %>%
+  mutate_at(.vars = vars(contains("ideol")), 
+            .funs = list(~ifelse(. > 50, NA, .)))
+
+cses_pr <- cses_pr %>%
+  mutate_at(.vars = vars(contains("vote"), contains("numparty")), 
+            .funs = list(~ifelse(. >9999900, NA, .)))
+
+
+
+#Transformando class das variáveis para poder aplicar case_when 
 
 cses_pr <- cses_pr %>%
   mutate_at(vars(starts_with("ex_ideolparty"), starts_with("ideolparty"), starts_with("vote"),
@@ -34,15 +61,6 @@ cses_pr <- cses_pr %>%
 #Creio não ter nenhuma variável com "ideol" no nome além de todas de placement (self, party, leader
 # e suas versões alternativas/expert) E IDEOL_FAMILY (que tem valores não-missing até
 #26 segundo o Codebook IMD). Então uso essa palavra para atribuir todos missings dessas:
-
-
-cses_pr <- cses_pr %>%
-  mutate_at(.vars = vars(contains("ideol")), 
-            .funs = list(~ifelse(. > 50, NA, .)))
-
-cses_pr <- cses_pr %>%
-  mutate_at(.vars = vars(contains("vote")), 
-            .funs = list(~ifelse(. >9999900, NA, .)))
 
 
 ##### CORREÇÕES DE COALIZÕES #####
@@ -561,6 +579,14 @@ cses_pr <- cses_pr %>% mutate (
   )
 )
 
+##### MISSING #####
+#Vou rodar novamente para pegar variáveis criadas - ideol_voted, ideol_elected
+#DEPOIS AS OUTRAS CRIADAS (closest, congruence) se baseiam nessas já recodificadas. 
+
+
+cses_pr <- cses_pr %>%
+  mutate_at(.vars = vars(contains("ideol")), 
+            .funs = list(~ifelse(. > 10, NA, .)))
 
 
 ##### % DE TIPOS DE MISSING EM IDEOLOGIA #####
@@ -603,37 +629,11 @@ cses_pr <- cses_pr %>% mutate (
 
 
 
-##### LIMPEZA DE VARIÁVEIS E MISSINGS #####
-
-##### TIRANDO ALGUMAS VARIÁVEIS QUE NÃO USAREMOS AGORA:
-
-#cses_pr <- cses_pr %>% select (-starts_with("numparty"), -starts_with("prevote"), 
- #                              -contains("UH"), - contains("LH"), -contains("ch"))
 
 
-
-#REDUZINDO VARIÁVEIS E ORGANIZANDO NUMA ORDEM MELHOR
-# Posso usar essa lista para outras seleções inclusive no Legislativo (MAS TOMAR CUIDADO COM DOIS PONTOS,
-#PODE PEGAR COISA QUE NÃO ESTAVA NO MEIO ORIGINALMENTE, que não se pretendia pegar)
-
-csespr_adj <- cses_pr %>% select(ID,	election,	country, module, type, system_PR,  #MAIN DATA ON EACH ELECTION
-                                 vote_PR_1,	vote_PR_2, ideol_self, starts_with("ideolparty"),      #IDEOLOGY
-                                 starts_with("ex_ideolparty"), starts_with("ideol_leader"),
-                                 alt_ideol_self, starts_with ("alt_ideol_party"),
-                                 starts_with ("exp_alt_ideol_party"), starts_with("alt_ideol_leader"),
-                                 #ideol_voted_PR_1:voted_exp_closest_PR_1, #IDEOLOGY - CREATED 
-                                 starts_with("family_ideol"), starts_with("rile"),
-                                 elected_pr, pcv_PR_A:pcv_PR_I, 
-                                 compulsory, regime_age:CENPP, fh_civil:dalton_pol, # INSTITUTIONS
-                                 GDP_1:GDP_3, cum_gdp,	abs_growth,	cum_gdp2,	abs_growth2, # ECONOMY
-                                 education, knowledge, knowledge_adj, efficacy,  #INDIVIDUAL
-                                 effic_vote, economy_1:IMD3015_D)  
 
 ##### CORREÇÃO PCV - IDEOL #####
 
-cses_pr_noadj <- cses_pr
-
-#CRIEI um banco alternativo para se precisar usar as variáveis de ideologia sem as correções abaixo! 
 
 #COM FUNÇÃO GREP IDENTIFICAMOS O Nº DAS COLUNAS COM AS VARIÁVEIS RESPECTIVAS
 
@@ -730,24 +730,18 @@ cses_pr$voted_closest_PR_1 <- with(cses_pr, as.numeric (closest == ideol_voted_P
 # VOTED CLOSEST EXPERT? 
 cses_pr$voted_exp_closest_PR_1 <- with(cses_pr, as.numeric (exp_closest == ideol_voted_PR_1))
 
+##### TRANSFORMAÇÕES #####
+
+#RILE - MANIFESTO (transformando em escala 1 a 10)
 
 
-#### NOVA TABELA COM SUMÁRIOS - MÉDIAS E PORCENTAGENS:
-#tab_pr <- cses_pr %>% group_by(election, country) %>%
- # summarize_all (.funs = c(mean="mean"), na.rm = T)
 
-#write.csv(tab_pr, file = "TABLES/Summary - final - Presidential 1.csv")
-
-
-#write.csv(cses_pr, file = "TABLES/CSES - Presidential 1 - final.csv")
-
-
-##### FUNÇÃO - ESCALA DE VARIÁVEIS CONGRUÊNCIA #####
-scale_per <- function(x, na.rm = FALSE) (1+ (x/-10))
-
-cses_pr <- cses_pr %>%
-  mutate_at(vars(contains("cong"), dif_cls_PR_1, voter_exp_dif_PR_1),
-            scale_per) 
+##### FUNÇÃO - ESCALA DE VARIÁVEIS CONGRUÊNCIA 
+# scale_per <- function(x, na.rm = FALSE) (1+ (x/-10))
+# 
+# cses_pr <- cses_pr %>%
+#   mutate_at(vars(contains("cong"), dif_cls_PR_1, voter_exp_dif_PR_1),
+#             scale_per) 
 
 ##### EXPLICAÇÃO #####
 #A escala iria de 0 a 10 (sendo 0 total congruência e 10 maior distância)
