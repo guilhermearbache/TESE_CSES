@@ -43,6 +43,8 @@ load("C:/Users/livia/Desktop/TESE_CSES/cses_add.rdata")
 # Só tem em alguns módulos, não incluídas por enquanto (só variáveis descritivas): C3017 B5015 B5016 B3022,
 # repr_party, repr_leader
 
+###### CODIFICAÇÃO DE VARIÁVEIS ##### 
+
   
 # MISSING ATRIBUTION:
   cses <- cses %>%
@@ -82,9 +84,17 @@ load("C:/Users/livia/Desktop/TESE_CSES/cses_add.rdata")
   
  cses$year <- as.numeric(substr(cses$election, 5, 8))
  
-###### CODIFICAÇÃO DE VARIÁVEIS ##### 
-# MISSINGS e alguns ajustes
+# MAIS MISSINGS e alguns ajustes
 
+ 
+##### GENDER #####
+ cses <- cses %>%
+   mutate_at(.vars = vars(gender), 
+             .funs = list(~ifelse(. > 2, NA, .)))
+
+ 
+ cses$female <- cses$gender -1 
+ 
 ##### AGE #####
  cses <- cses %>%
    mutate_at(.vars = vars(age), 
@@ -209,8 +219,8 @@ cses <- cses %>% mutate(abs_growth2 = abs(cum_gdp2))
 ##### FREEDOM HOUSE #####
 # CSES já incluiu o índice geral, mas usarei indicadores desagregados 
 
-qog<- read.csv (url("http://www.qogdata.pol.gu.se/data/qog_std_ts_jan20.csv"))
-
+#qog<- read.csv (url("http://www.qogdata.pol.gu.se/data/qog_std_ts_jan20.csv"))
+qog<- read.csv("C:/Users/livia/Desktop/TESE_CSES/qog_std_ts_jan20.csv")
 
 qog <- qog %>% filter (year > 1995) %>% 
   select (year, ccodealp, cname, starts_with("fh_"))

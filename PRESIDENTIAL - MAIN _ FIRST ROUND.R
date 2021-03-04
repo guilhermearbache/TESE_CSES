@@ -32,13 +32,19 @@ cses_pr <- cses %>% filter (type == 20 | type == 12) %>%
                         compulsory, regime_age:CENPP, fh_civil:dalton_pol, # INSTITUTIONS
                         GDP_1:GDP_3, cum_gdp,	abs_growth,	cum_gdp2,	abs_growth2, # ECONOMY
                         education, knowledge, knowledge_adj, efficacy, 
-                        age, gender, rural, income,   #INDIVIDUAL
+                        age, female, rural, income,   #INDIVIDUAL
                         effic_vote, economy_1:IMD3015_D,
                         numparty_A:numparty_I)  
 
 
 
-##### MISSING #####
+##### RECODES/ MISSING #####
+
+cses_pr <- cses_pr %>%
+  mutate_at(.vars = vars(system_PR), 
+            .funs = list(~ifelse(. > 50, NA, .)))
+
+
 
 cses_pr <- cses_pr %>%
   mutate_at(.vars = vars(contains("ideol")), 
@@ -752,7 +758,27 @@ cses_pr$voted_exp_closest_PR_1 <- with(cses_pr, as.numeric (exp_closest == ideol
 # de 0 (maior distância, antigo 10) até 1 (congruência total, antigo 0).
 
 
+#### EFFECTIVE NUMBER OF PRESIDENTIAL CANDIDATES #####
 
+cses_pr$cname <- substr(cses_pr$election, 1, 3)
+
+des <- read.csv("C:/Users/livia/OneDrive - usp.br/TESE/DATASETS/Democratic Electoral Systems - GOLDER/es_data-v3.csv")
+des <- des %>% filter (presidential == 1 & year > 1994) # O ano nem precisava filtrar, mas o "presidential" sim senão
+#vai dar match errado, porque às vezes tem duas eleições, uma legislativa outra presidencial, no mesmo ano
+
+#Mesmo processo que fiz com o CMP (criar variável "election" a partir de nome do país e ano):
+des$cname <- cses_pr$cname[match(des$country, cses_pr$country)]
+
+des$election <- str_c(des$cname, "_", des$year)
+
+#AGORA SIM, O MATCH PARA INSERIR A VARIÁVEL NO CSES: 
+cses_pr$enpres <- des$enpres[match(cses_pr$election, des$election)]
+
+# PERU_2000 FOI A ÚNICA QUE FICOU FALTANDO 
+#1/(0.4987 ^2) + (0.4024 ^2) + (0.3 ^2) + (0.223 ^2) + (0.18 ^2)  + (0.138^2) + ( 0.072^2) + ( 0.042^2) + ( 0.033^2)
+cses_pr$enpres[cses_pr$election =="PER_2000"] <- 4.382017
+
+#Faltou também BLR_2001 e Russia mas esses já vou dropar por outros problemas maiores
 
 
 
