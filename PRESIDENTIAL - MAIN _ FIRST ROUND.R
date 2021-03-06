@@ -4,8 +4,7 @@ rm(list=ls()[!(ls() %in% c("cses"))])
 
 #load("CSES_w_Manifesto.RData")
 
-
-library(dplyr)
+library(tidyverse)
 #library(descr)
 
 # CORRIGIR PARA ARQUIVO NOVO, EM TESE_CSES: load("C:/Users/livia/OneDrive - usp.br/TESE/PROJETO - CSES/INTRO-EDIT/cses.RData")
@@ -29,7 +28,7 @@ cses_pr <- cses %>% filter (type == 20 | type == 12) %>%
                         starts_with("family_ideol"), rile_A:rile_I, 
                         rile_other_1:rile_other_4, # a partir de rile_other_5 nenhum dado nesses países
                         elected_pr, pcv_PR_A:pcv_PR_I, 
-                        compulsory, regime_age:CENPP, fh_civil:dalton_pol, # INSTITUTIONS
+                        compulsory, compulsory_dummy, regime_age:CENPP, fh_civil:dalton_pol, # INSTITUTIONS
                         GDP_1:GDP_3, cum_gdp,	abs_growth,	cum_gdp2,	abs_growth2, # ECONOMY
                         education, knowledge, knowledge_adj, efficacy, 
                         age, female, rural, income,   #INDIVIDUAL
@@ -737,6 +736,13 @@ cses_pr$voted_closest_PR_1 <- with(cses_pr, as.numeric (closest == ideol_voted_P
 cses_pr$voted_exp_closest_PR_1 <- with(cses_pr, as.numeric (exp_closest == ideol_voted_PR_1))
 
 ##### TRANSFORMAÇÕES #####
+
+cong_inv <- function(x, na.rm = FALSE) (x * -1)
+
+cses_pr <- cses_pr %>%
+    mutate_at(vars(contains("cong")),
+              cong_inv) 
+
 
 #RILE - MANIFESTO (transformando em escala 1 a 10)
 
