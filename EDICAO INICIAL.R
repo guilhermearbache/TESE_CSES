@@ -184,13 +184,29 @@ cses <- cses %>%
 
 
 
-##### TURNOUT (individual) #####
+# TURNOUT individual (votou/não votou)
 
 cses <- cses %>%
   mutate_at(.vars = vars(starts_with("voted")),  
             .funs = funs(ifelse(. >=9999993 , NA, .)))
 
-#COMPULSORY VOTE não tem missing!
+##### COMPULSORY VOTE #####
+
+#Não tem missing! Mas vou fazer uma pequena alteração e também criar dummy:
+
+# Para ficar numa ordem lógica e sem "buracos" (não tinha nada com valor 4, era 1-2-3-5), 
+#faço alteração para facultativo ser 0 e depois 1,2,3 quanto maiores as sanções. 
+
+cses$compulsory[cses$compulsory == 5] <- 4 
+
+cses$compulsory <- (cses$compulsory - 4) * -1  
+
+
+#Dummy:
+
+cses$compulsory_dummy <- 0
+cses$compulsory_dummy[cses$compulsory >0 ] <- 1
+
 
 ##### GDP #####
 
@@ -240,12 +256,20 @@ cses$fh_civil <- qog$fh_cl[match(cses$cyear, qog$cyear)]
 cses$fh_pol <- qog$fh_pr[match(cses$cyear, qog$cyear)]
 
 # Mais específicas (dentro de political)
-cses$fh_elec <- qog$fh_ep[match(cses$cyear, qog$cyear)]
-cses$fh_plural <- qog$fh_ppp[match(cses$cyear, qog$cyear)]
+cses$fh_elec <- qog$fh_ep[match(cses$cyear, qog$cyear)]    #Electoral process
+cses$fh_plural <- qog$fh_ppp[match(cses$cyear, qog$cyear)] #Political Pluralism and Participation
 
 
-#Freedom of expression:
-cses$fh_expr <- qog$fh_feb[match(cses$cyear, qog$cyear)]
+cses$fh_aor <- qog$fh_aor[match(cses$cyear, qog$cyear)]
+cses$freedom_net <- qog$fhn_fotnloc[match(cses$cyear, qog$cyear)] # Freedom on the Net: Limits on content
+cses$fh_rol <- qog$fh_rol[match(cses$cyear, qog$cyear)] # Rule of Law
+
+cses$fh_fog <- qog$fh_fog[match(cses$cyear, qog$cyear)] # Functioning of Government
+
+cses$fh_expr <- qog$fh_feb[match(cses$cyear, qog$cyear)]  #Freedom of expression and beliefs
+
+
+cses$fh_polity <- qog$fh_ipolity2[match(cses$cyear, qog$cyear)]  #Freeedom House + Polity 
 
 
 ##### POLARIZATION #####
