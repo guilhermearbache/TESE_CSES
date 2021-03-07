@@ -239,7 +239,7 @@ cses <- cses %>% mutate(abs_growth2 = abs(cum_gdp2))
 qog<- read.csv("C:/Users/livia/Desktop/TESE_CSES/qog_std_ts_jan20.csv")
 
 qog <- qog %>% filter (year > 1995) %>% 
-  select (year, ccodealp, cname, starts_with("fh_"))
+  select (year, ccodealp, cname, starts_with("fh_"), starts_with("fhn_"))
 
 qog$cyear <- paste(qog$ccodealp, qog$year) 
 qog$cyear <- gsub(" ", "_", qog$cyear)
@@ -255,13 +255,25 @@ substr(cses$cyear, 4, 4) <- "_"
 cses$fh_civil <- qog$fh_cl[match(cses$cyear, qog$cyear)]
 cses$fh_pol <- qog$fh_pr[match(cses$cyear, qog$cyear)]
 
+
+# INVERTENDO AS ESCALAS, PARA MAIS DEMOCRÁTICO TER VALOR MAIOR
+#(além de mais fácil de interpretar, fica mais condizente com os sub-indicadores do próprio Freedom House, 
+#em que valores maiores significa mais democrático)
+
+invert <- function(x, na.rm = FALSE) (x * -1)
+
+cses <- cses %>%
+  mutate_at(vars(fh_civil, fh_pol, starts_with("freedom_house")),
+            invert) 
+
+
+
 # Mais específicas (dentro de political)
 cses$fh_elec <- qog$fh_ep[match(cses$cyear, qog$cyear)]    #Electoral process
 cses$fh_plural <- qog$fh_ppp[match(cses$cyear, qog$cyear)] #Political Pluralism and Participation
 
 
 cses$fh_aor <- qog$fh_aor[match(cses$cyear, qog$cyear)]
-cses$freedom_net <- qog$fhn_fotnloc[match(cses$cyear, qog$cyear)] # Freedom on the Net: Limits on content
 cses$fh_rol <- qog$fh_rol[match(cses$cyear, qog$cyear)] # Rule of Law
 
 cses$fh_fog <- qog$fh_fog[match(cses$cyear, qog$cyear)] # Functioning of Government
@@ -269,8 +281,11 @@ cses$fh_fog <- qog$fh_fog[match(cses$cyear, qog$cyear)] # Functioning of Governm
 cses$fh_expr <- qog$fh_feb[match(cses$cyear, qog$cyear)]  #Freedom of expression and beliefs
 
 
+cses$freedom_net <- qog$fhn_fotnloc[match(cses$cyear, qog$cyear)] # Freedom on the Net: Limits on content
+
 cses$fh_polity <- qog$fh_ipolity2[match(cses$cyear, qog$cyear)]  #Freeedom House + Polity 
 
+### EXISTEM OUTROS - VER EM QOG ! 
 
 ##### POLARIZATION #####
 
