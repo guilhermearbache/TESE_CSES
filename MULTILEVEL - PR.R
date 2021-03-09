@@ -1,4 +1,5 @@
-# PRESIDENTIAL #
+
+rm(list=ls()[!(ls() %in% c("cses_exp", "cses_pr"))])
 
 ##### PACKAGES #####
 library(mlmRev)
@@ -9,16 +10,17 @@ library(sjPlot)
 
 ##### SUBSET ######
 
-elections_drop <- c("BLR_2001", "KGZ_2005", "LTU_1997", "ROU_1996", "RUS_2000", "RUS_2004",
+expert_drop <- c("BLR_2001", "KGZ_2005", "LTU_1997", "PER_2001", "PHL_2004", "ROU_1996", "RUS_2000", "RUS_2004",
                     "TWN_2012")
 
 '%ni%' <- Negate('%in%')
 
-cses_exp <- cses_pr %>% filter (election %ni% elections_drop)
+cses_exp <- cses_pr %>% filter (election %ni% expert_drop)
 
-#"PHL_2004", "PHL_2016"
+#, "PHL_2016" - versão com e sem Grace Poe para expert, sem expert nenhuma delas! 
 #"TWN_2012" - NÃO TEM EXPERT. 
 #"CHL_1999", USA_1996 - NÃO TEM CITIZEN!
+#PER_2001 - NÃO TEM EXPERT!
 
 # REGRESSÃO 1 LEVEL # 
 EDU1 <- glm(exp_cong_PR_1~ education, data = cses_exp)
@@ -63,25 +65,11 @@ CITY <- lmerTest::lmer(exp_cong_PR_1~ rural + (1|election), data = cses_exp)
 GEND <- lmerTest::lmer(exp_cong_PR_1~ female + (1|election), data = cses_exp) 
 
 
-plot_models(EDU1, KNW1, VTDIF1, AGE1, INCOME1, CITY1, GEND1, CLS1,
-  show.legend = FALSE, 
-  show.values = TRUE, axis.title = "", ci.lvl =.999, 
-  dot.size=2, line.size =1, spacing = 0.5) + 
-  scale_color_sjplot("eight") # eight e us são as melhores 
-
-
-
-plot_models(EDU, KNW, VTDIF, AGE, INCOME, CITY, GEND, EDU1, KNW1, VTDIF1, AGE1, INCOME1, CITY1, GEND1, CLS, CLS1,
-            axis.labels = c("Proximidade (oferta)", "Sexo (feminino)", "Urbano/rural", "Renda", 
-                            "Idade", "Diferença de posicionamento (cidadão/expert)",
-                            "Conhecimento político", "Educação"), show.legend = FALSE, 
+plot_models(EDU, KNW, VTDIF, AGE, INCOME, CITY, GEND,
+           show.legend = FALSE, 
   show.values = TRUE, axis.title = "",   
   ci.lvl =.999, dot.size=2, 
   line.size =1, spacing = .4) + scale_color_sjplot("eight")
-
-
-
-
 
 ##### INSTITUIÇÕES #####
 
@@ -96,8 +84,6 @@ ENEP <- lmerTest::lmer(exp_cong_PR_1 ~ ENEP + (1|election), data = cses_exp)
 PR2 <- lmerTest::lmer(exp_cong_PR_1 ~ round2_PR + (1|election), data = cses_exp)
 
 
-
-
 pr_summary <- cses_exp %>% group_by(election, country) %>%
   select (country, election, enpres) %>%
   summarize_all (.funs = c(mean="mean"), na.rm = T)
@@ -109,12 +95,6 @@ pr_summary <- cses_exp %>% group_by(election, country) %>%
 #system_pr tem 4 categorias: plurality (Mexico, Philippines e Taiwan), abs. majority (segundo turno tradicional), qualified majority (só Arg aqui),
 #e electoral college (EUA)
 
-# CRIANDO DUMMIES
-
-#PLURALITY VS MAJORITY
-
-cses_exp$plurality <- 0
-cses_exp$plurality[cses_exp$system_PR == 1] <- 1
 
 SYS <- lmerTest::lmer(exp_cong_PR_1 ~ plurality + (1|election), data = cses_exp)
 
@@ -130,16 +110,6 @@ plot_models(
   show.legend = FALSE, show.values = TRUE,  axis.title = "", ci.lvl =.99, 
   dot.size=2, line.size =1, spacing = 0.5) 
 
-
-# COM DUMMY PARA TODOS TIPOS:
-cses_exp$elec_college <- 0
-cses_exp$elec_college[cses_exp$system_PR == 4] <- 1
-
-cses_exp$quali_maj <- 0
-cses_exp$quali_maj[cses_exp$system_PR == 3] <- 1
-
-cses_exp$maj <- 0
-cses_exp$maj[cses_exp$system_PR == 2] <- 1
 
 SYS_3 <- lmerTest::lmer(exp_cong_PR_1 ~ plurality + elec_college + (1|election), data = cses_exp)
 SYS_full <- lmerTest::lmer(exp_cong_PR_1 ~ maj + quali_maj + elec_college + (1|election), data = cses_exp) 
@@ -240,13 +210,46 @@ plot_models(ABS_GROWTH, GDP_1, CUMGDP, VOLUNT,
 
 ##### FULL MODELS #####
 
-M1 <- lmerTest::lmer( exp_cong_PR_1 ~ voter_exp_dif_PR_1 + education + knowledge_adj 
-                      + dif_cls_PR_1 + cong_closest + ENEP + compulsory_dummy + abs_growth2 +
-                        freedom_house_1 + age + income + rural + regime_age + enpres +
-                        round2_PR + plurality
+##### TOTALMENTE FULL #####
+M1 <- lmerTest::lmer( exp_cong_PR_1 ~ education + knowledge_adj + voter_exp_dif_PR_1
+                      + age + income + rural 
+                       + cong_closest + + enpres + ENEP +
+                        freedom_house_1  + regime_age + 
+                        round2_PR + plurality +
+                        abs_growth2 + dif_cls_PR_1 + compulsory_dummy 
                       + (1|election), data = cses_exp)
 
-plot_models(M1,
+##### TIRAR AS QUE NÃO SÃO SIGNIFICANTES AQUI NEM SOZINHAS #####
+#age, rural, abs_growth2, regime, compulsory
+
+
+
+
+##### NESSE MODELO FH QUASE VOLTA AO ÍNDICE NORMAL:
+
+
+M1.2 <- lmerTest::lmer( exp_cong_PR_1 ~ education + knowledge_adj 
+                      + age + income + rural 
+                      + cong_closest + + enpres +
+                        freedom_house_1  +  
+                        round2_PR  +
+                         compulsory_dummy 
+                      + (1|election), data = cses_exp)
+
+
+
+INST <- lmerTest::lmer( exp_cong_PR_1 ~ freedom_house_1 
+                           + voter_exp_dif_PR_1  
+                      + (1|election), data = cses_exp)
+
+
+INST <- lmerTest::lmer( exp_cong_PR_1 ~ freedom_house_1 
+                        + education + knowledge_adj + regime_age + 
+                         plurality
+                        + cong_closest + + age + income + rural
+                        + (1|election), data = cses_exp)
+
+plot_models(M1, M1.2,
             show.legend = FALSE, show.values = TRUE,  axis.title = "", ci.lvl =.95, 
             dot.size=2, line.size =1, spacing = 0.5) 
 
@@ -270,6 +273,15 @@ plot_models(M2,M3,
 
 ##### VARYING SLOPES #####
 
+
+M1 <- lmerTest::lmer( exp_cong_PR_1 ~ education + knowledge_adj + voter_exp_dif_PR_1
+                      + age + income + rural 
+                      + cong_closest + + enpres + ENEP +
+                        freedom_house_1  + regime_age + 
+                        round2_PR + plurality +
+                        abs_growth2 + dif_cls_PR_1 + compulsory_dummy 
+                      + (1|election), data = cses_exp)
+
 ### varying slope para cognitivas, e talvez alguma outra? Closest não sei se faria sentido, 
 #por que em um país closest teria MAIS IMPACTO do que em outro? 
 #Deve ter relação entre closest para VOTERS e compulsory vote - quem é obrigado a votar tem mais chance de votar mesmo
@@ -290,8 +302,7 @@ plot_models(M2,M3,
 # SEM EXP_CONG talvez a congruência subjetiva faça mais sentido!
 
 
-# gráficos de "random effect (re) # ?
-
+# gráficos de "random effect (re) # ? http://www.strengejacke.de/sjPlot/reference/plot_model.html
 
 ##### TABELAS DE REGRESSÃO #####
 class(AGE) <- "lmerMod"
