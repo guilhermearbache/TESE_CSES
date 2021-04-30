@@ -166,6 +166,26 @@ cses <- cses %>%
 
 
 
+##### CITIZEN PLACEMENT - MEAN ####
+
+
+grouped_CSES<- cses %>% select (country, election, ideolparty_A:ideolparty_I) %>% 
+  group_by (country, election)  %>% 
+summarize_all (.funs = c(mean="mean"), na.rm = T) 
+
+
+cses$ideol_mean_A <- grouped_CSES$ideolparty_A_mean[match(cses$election, grouped_CSES$election)]
+cses$ideol_mean_B <- grouped_CSES$ideolparty_B_mean[match(cses$election, grouped_CSES$election)]
+cses$ideol_mean_C <- grouped_CSES$ideolparty_C_mean[match(cses$election, grouped_CSES$election)]
+cses$ideol_mean_D <- grouped_CSES$ideolparty_D_mean[match(cses$election, grouped_CSES$election)]
+cses$ideol_mean_E <- grouped_CSES$ideolparty_E_mean[match(cses$election, grouped_CSES$election)]
+cses$ideol_mean_F <- grouped_CSES$ideolparty_F_mean[match(cses$election, grouped_CSES$election)]
+cses$ideol_mean_G <- grouped_CSES$ideolparty_G_mean[match(cses$election, grouped_CSES$election)]
+cses$ideol_mean_H <- grouped_CSES$ideolparty_H_mean[match(cses$election, grouped_CSES$election)]
+cses$ideol_mean_I <- grouped_CSES$ideolparty_I_mean[match(cses$election, grouped_CSES$election)]
+
+
+
 ##### ENEP & SHARE OF VOTES/SEATS#####
 
 #No primeiro já aproveitei e incluí "turnout"
@@ -231,6 +251,11 @@ cses <- cses %>% mutate (cum_gdp2 = (((GDP_1/100 + 1) *(GDP_2/100 + 1) * (GDP_3/
 
 cses <- cses %>% mutate(abs_growth2 = abs(cum_gdp2))
 
+##### REGIME AGE #####
+
+cses <- cses %>%
+  mutate_at(.vars = vars(regime_age), 
+            .funs = funs(ifelse(. == 999, NA, .)))
 
 ##### FREEDOM HOUSE #####
 # CSES já incluiu o índice geral, mas usarei indicadores desagregados 
@@ -286,6 +311,7 @@ cses$freedom_net <- qog$fhn_fotnloc[match(cses$cyear, qog$cyear)] # Freedom on t
 cses$fh_polity <- qog$fh_ipolity2[match(cses$cyear, qog$cyear)]  #Freeedom House + Polity 
 
 ### EXISTEM OUTROS - VER EM QOG ! 
+
 
 ##### POLARIZATION #####
 
