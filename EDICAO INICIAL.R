@@ -293,6 +293,8 @@ cses$fh_polity <- qog$fh_ipolity2[match(cses$cyear, qog$cyear)]  #Freeedom House
 #Desativado porque eu fiz uma alteração "na mão", usar a planilha já
 #salva com a alteração!
 
+# Link para o arquivo original, detalhes e codebook:
+# https://cses.org/data-download/download-data-documentation/party-system-polarization-index-for-cses-modules-1-4/
 # Criar versão resumida do CSES (talvez não fosse necessário mas
 #evita mais variáveis no CSES, o que além de deixar o banco mais 
 #difícil de lidar sobrecarrega minha memória. 
@@ -326,9 +328,9 @@ polariz$cyear <- paste(polariz$cname, polariz$Year, sep = "_")
 #Finalmente, o match para criar a variável no CSES:
 cses$dalton_pol <- polariz$Polarization[match(cses$cyear, polariz$cyear)]  
 
-
-
-save(cses, file = "cses.RData")
+cses <- cses %>%
+  mutate_at(.vars = vars(dalton_pol), 
+            .funs = list(~ifelse(. > 90, NA, .)))
 
 
 #tab_cses <- 
