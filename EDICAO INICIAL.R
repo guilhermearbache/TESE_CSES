@@ -164,10 +164,15 @@ cses <- cses %>%
   mutate_at(.vars = vars(party_ID_1, party_ID_2), 
             .funs = funs(ifelse(. == 5, 0, .)))
 
+#IDEOLOGIA - tinha deixado nos Scripts de Legislativo e PR, para fazer aquela tabela de
+#tipos de missing
+#Se for fazer aquela tabela de novo é preciso recuperar a variável original! 
 
+cses <- cses %>%
+  mutate_at(.vars = vars(contains("ideol")), 
+            .funs = list(~ifelse(. > 50, NA, .)))
 
 ##### CITIZEN PLACEMENT - MEAN ####
-
 
 grouped_CSES<- cses %>% select (country, election, ideolparty_A:ideolparty_I) %>% 
   group_by (country, election)  %>% 
