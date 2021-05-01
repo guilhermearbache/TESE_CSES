@@ -2,7 +2,7 @@
 
 rm(list=ls()[!(ls() %in% c("cses"))])
 
-#load("CSES_w_Manifesto.RData")
+load("CSES_Manifesto.RData")
 
 library(tidyverse)
 #library(descr)
@@ -20,7 +20,8 @@ library(tidyverse)
 
 cses_pr <- cses %>% filter (type == 20 | type == 12) %>%
   select(ID,	election,	country, module, type, system_PR,  #MAIN DATA ON EACH ELECTION
-                        vote_PR_1,	vote_PR_2, ideol_self, starts_with("ideolparty"),      #IDEOLOGY
+                        vote_PR_1,	vote_PR_2, ideol_self, starts_with("ideolparty"),  #IDEOLOGY
+                        starts_with("ideol_mean"), # Ideology (mean of all voters in each election)
                         starts_with("ex_ideolparty"), starts_with("ideol_leader"),
                         alt_ideol_self, starts_with ("alt_ideolparty"),
                         starts_with ("exp_alt_ideolparty"), starts_with("alt_ideol_leader"),
@@ -28,10 +29,10 @@ cses_pr <- cses %>% filter (type == 20 | type == 12) %>%
                         starts_with("family_ideol"), rile_A:rile_I, 
                         rile_other_1:rile_other_4, # a partir de rile_other_5 nenhum dado nesses países
                         elected_pr, pcv_PR_A:pcv_PR_I, 
-                        compulsory, compulsory_dummy, regime_age:CENPP, fh_civil:dalton_pol, # INSTITUTIONS
+                        compulsory, compulsory_dummy, regime_age:CENPP, fh_civil:dalton_pol,freedom_net, # INSTITUTIONS
                         GDP_1:GDP_3, cum_gdp,	abs_growth,	cum_gdp2,	abs_growth2, # ECONOMY
                         education, knowledge, knowledge_adj, efficacy, 
-                        age, female, rural, income,   #INDIVIDUAL
+                        age, gender, female, rural, income,   #INDIVIDUAL
                         effic_vote, economy_1:IMD3015_D,
                         numparty_A:numparty_I)  
 
@@ -508,6 +509,25 @@ cses_pr <- cses_pr %>% mutate (pcv_PR_H = case_when(election == "SRB_2012" ~  1.
     TRUE ~ pcv_PR_H)) 
     
 
+##### PARTY_IDEOLOGY - MEAN OF VOTERS PLACEMENT #####
+
+grouped_PR<- cses_pr %>% select (country, election, ideolparty_A:ideolparty_I) %>% 
+  group_by (country, election)  %>% 
+  summarize_all (.funs = c(mean="mean"), na.rm = T) 
+
+
+cses_pr$ideol_mean_A <- grouped_PR$ideolparty_A_mean[match(cses_pr$election, grouped_PR$election)]
+cses_pr$ideol_mean_B <- grouped_PR$ideolparty_B_mean[match(cses_pr$election, grouped_PR$election)]
+cses_pr$ideol_mean_C <- grouped_PR$ideolparty_C_mean[match(cses_pr$election, grouped_PR$election)]
+cses_pr$ideol_mean_D <- grouped_PR$ideolparty_D_mean[match(cses_pr$election, grouped_PR$election)]
+cses_pr$ideol_mean_E <- grouped_PR$ideolparty_E_mean[match(cses_pr$election, grouped_PR$election)]
+cses_pr$ideol_mean_F <- grouped_PR$ideolparty_F_mean[match(cses_pr$election, grouped_PR$election)]
+cses_pr$ideol_mean_G <- grouped_PR$ideolparty_G_mean[match(cses_pr$election, grouped_PR$election)]
+cses_pr$ideol_mean_H <- grouped_PR$ideolparty_H_mean[match(cses_pr$election, grouped_PR$election)]
+cses_pr$ideol_mean_I <- grouped_PR$ideolparty_I_mean[match(cses_pr$election, grouped_PR$election)]
+
+
+
 ###### IDEOLOGY - PARTY VOTED #####
 
 ### PARA PODER USAR O CASE_WHEN, MUDAR TUDO PARA MESMO TIPO (NUMERIC):
@@ -546,6 +566,22 @@ cses_pr <- cses_pr %>% mutate (
   )
 )
 
+# VOTERS MEAN
+
+cses_pr <- cses_pr %>% mutate (
+  meanv_ideol_voted_PR_1 = case_when(
+    numparty_A == vote_PR_1 ~ ideol_mean_A,
+    numparty_B == vote_PR_1 ~ ideol_mean_B,
+    numparty_C == vote_PR_1 ~ ideol_mean_C,
+    numparty_D == vote_PR_1 ~ ideol_mean_D,
+    numparty_E == vote_PR_1 ~ ideol_mean_E,
+    numparty_F == vote_PR_1 ~ ideol_mean_F,
+    numparty_G == vote_PR_1 ~ ideol_mean_G,
+    numparty_H == vote_PR_1 ~ ideol_mean_H,
+    numparty_I == vote_PR_1 ~ ideol_mean_I,
+    TRUE                    ~ vote_PR_1
+  )
+)
 
 
 ##### IDEOLOGY - ELECTED #####
@@ -584,10 +620,27 @@ cses_pr <- cses_pr %>% mutate (
   )
 )
 
+
+# MEAN VOTER
+
+cses_pr <- cses_pr %>% mutate (
+  meanv_ideol_elected_PR_1 = case_when(
+    numparty_A == elected_pr ~ ideol_mean_A,
+    numparty_B == elected_pr ~ ideol_mean_B,
+    numparty_C == elected_pr ~ ideol_mean_C,
+    numparty_D == elected_pr ~ ideol_mean_D,
+    numparty_E == elected_pr ~ ideol_mean_E,
+    numparty_F == elected_pr ~ ideol_mean_F,
+    numparty_G == elected_pr ~ ideol_mean_G,
+    numparty_H == elected_pr ~ ideol_mean_H,
+    numparty_I == elected_pr ~ ideol_mean_I,
+    TRUE                    ~ elected_pr
+  )
+)
+
 ##### MISSING #####
 #Vou rodar novamente para pegar variáveis criadas - ideol_voted, ideol_elected
 #DEPOIS AS OUTRAS CRIADAS (closest, congruence) se baseiam nessas já recodificadas. 
-
 
 cses_pr <- cses_pr %>%
   mutate_at(.vars = vars(contains("ideol")), 
@@ -629,16 +682,7 @@ cses_pr <- cses_pr %>%
 #write.csv(table2, file = "TABLES/Ideol_self_PR Subset.csv")
 
 
-
-
-
-
-
-
-
-
 ##### CORREÇÃO PCV - IDEOL #####
-
 
 #COM FUNÇÃO GREP IDENTIFICAMOS O Nº DAS COLUNAS COM AS VARIÁVEIS RESPECTIVAS
 
@@ -668,13 +712,9 @@ altleadercols <- grep("^alt_ideol_leader", names(cses_pr))
 cses_pr[altleadercols][is.na(cses_pr[pcvcols])] <- NA
 
 
+##### CLOSEST/ CONG_CLOSEST #####
 
-
-
-##### CLOSEST #####
-
-
-##### CLOSEST PARTY - Voter Perspective#####
+##### Voter Perspective#####
 
 cses_pr <- data.frame(cses_pr)
 
@@ -685,8 +725,7 @@ cses_pr$closest <- cses_pr[cols][cbind(1:nrow(cses_pr),
 
 cses_pr <- cses_pr %>% mutate (cong_closest = abs(closest-ideol_self))
 
-
-##### CLOSEST PARTY - Expert Perspective #####
+##### Expert Perspective #####
 
 cols <- grep("^ex_ideolparty", names(cses_pr))
 
@@ -694,15 +733,23 @@ temp_df <- -abs(cses_pr[cols] - cses_pr$ideol_self)
 cses_pr$exp_closest <- cses_pr[cols][cbind(1:nrow(cses_pr), 
                                            max.col(replace(temp_df, is.na(temp_df), -Inf)))]
 
-##### CONGRUÊNCIA - PARTIDO MAIS PRÓXIMO (VOTER - CLOSEST PARTY DISTANCE) #####
-
 cses_pr <- cses_pr %>% mutate (cong_closest_exp= abs(exp_closest-ideol_self))
 
+
+##### MEAN - Voters #####
+
+cols <- grep("^ideol_mean", names(cses_pr))
+temp_df <- -abs(cses_pr[cols] - cses_pr$ideol_self)
+cses_pr$meanv_closest <- cses_pr[cols][cbind(1:nrow(cses_pr), 
+                                       max.col(replace(temp_df, is.na(temp_df), -Inf)))]
+
+cses_pr <- cses_pr %>% mutate (cong_closest_meanv = abs(meanv_closest-ideol_self))
 
 ##### ELECTED - CONGRUENCE #####
 
 cses_pr <- cses_pr %>% mutate (cong_elected= abs(ideol_elected_PR_1-ideol_self))
 cses_pr <- cses_pr %>% mutate (cong_elected_exp= abs(exp_ideol_elected_PR_1-ideol_self))
+cses_pr <- cses_pr %>% mutate (cong_elected_meanv= abs(meanv_ideol_elected_PR_1-ideol_self))
 
 
 # EXPERT CLOSEST = PERCEIVED CLOSEST? DUMMY (PARA PODER CALCULAR % POR ELEIÇÃO)
@@ -719,14 +766,22 @@ cses_pr <- mutate (cses_pr, cong_PR_1 = abs(ideol_self - ideol_voted_PR_1))
 ##### CONGRUÊNCIA PARTY VOTED (EXPERT) - SELF #####
 cses_pr <- mutate (cses_pr, exp_cong_PR_1 = abs(ideol_self - exp_ideol_voted_PR_1))
 
+##### CONGRUÊNCIA PARTY VOTED (MEAN CITIZENS) - SELF #####
+cses_pr <- mutate (cses_pr, meanv_cong_PR_1 = abs(ideol_self - meanv_ideol_voted_PR_1))
+
+
 ##### VOLUNTARY INCONGRUENCE #####
 # Diferença entre congruência com partido votado e com o closest
 cses_pr$dif_cls_PR_1 <- cses_pr$cong_PR_1 - cses_pr$cong_closest
 
-
-##### DIFERENÇA PARTY VOTED PERCEIVED/EXPERT #####
+##### DIFERENÇA PARTY VOTED CITIZEN/EXPERT PLACEMENT #####
 
 cses_pr$voter_exp_dif_PR_1 <- abs(cses_pr$exp_ideol_voted_PR_1 - cses_pr$ideol_voted_PR_1)
+
+
+##### DIFERENÇA PARTY VOTED CITIZEN/MEAN CITIZENS #####
+
+cses_pr$voter_meanv_dif_PR_1 <- abs(cses_pr$meanv_ideol_voted_PR_1 - cses_pr$ideol_voted_PR_1)
 
 
 # VOTED CLOSEST PERCEIVED? DUMMY (%)
@@ -735,13 +790,67 @@ cses_pr$voted_closest_PR_1 <- with(cses_pr, as.numeric (closest == ideol_voted_P
 # VOTED CLOSEST EXPERT? 
 cses_pr$voted_exp_closest_PR_1 <- with(cses_pr, as.numeric (exp_closest == ideol_voted_PR_1))
 
+
+
+##### PLURALITY #####
+
+
+#system_pr tem 4 categorias: plurality (Mexico, Philippines e Taiwan), 
+#abs. majority (segundo turno tradicional), qualified majority (só Arg aqui),
+#e electoral college (EUA)
+
+#PLURALITY VS MAJORITY
+
+cses_pr$plurality <- 0
+cses_pr$plurality[cses_pr$system_PR == 1] <- 1
+
+# OUTRAS DUMMIES PARA CADA CATEGORIA:
+
+cses_pr$elec_college <- 0
+cses_pr$elec_college[cses_pr$system_PR == 4] <- 1
+
+cses_pr$quali_maj <- 0
+cses_pr$quali_maj[cses_pr$system_PR == 3] <- 1
+
+cses_pr$maj <- 0
+cses_pr$maj[cses_pr$system_PR == 2] <- 1
+
+
+##### 2º TURNO - DUMMY #####
+
+cses_pr$round2_PR <- 0
+
+cses_pr$round2_PR[cses_pr$election =="ARG_2015"] <- 1
+cses_pr$round2_PR[cses_pr$election =="BRA_2002"] <- 1
+cses_pr$round2_PR[cses_pr$election =="BRA_2006"] <- 1
+cses_pr$round2_PR[cses_pr$election =="BRA_2010"] <- 1
+cses_pr$round2_PR[cses_pr$election =="BRA_2014"] <- 1
+cses_pr$round2_PR[cses_pr$election =="CHL_1999"] <- 1
+cses_pr$round2_PR[cses_pr$election =="CHL_2005"] <- 1
+cses_pr$round2_PR[cses_pr$election =="CHL_2009"] <- 1
+cses_pr$round2_PR[cses_pr$election =="FRA_2002"] <- 1
+cses_pr$round2_PR[cses_pr$election =="FRA_2012"] <- 1
+cses_pr$round2_PR[cses_pr$election =="LTU_1997"] <- 1
+cses_pr$round2_PR[cses_pr$election =="PER_2000"] <- 1
+cses_pr$round2_PR[cses_pr$election =="PER_2001"] <- 1
+cses_pr$round2_PR[cses_pr$election =="PER_2006"] <- 1
+cses_pr$round2_PR[cses_pr$election =="PER_2011"] <- 1
+cses_pr$round2_PR[cses_pr$election =="PER_2016"] <- 1
+cses_pr$round2_PR[cses_pr$election =="ROU_1996"] <- 1
+cses_pr$round2_PR[cses_pr$election =="ROU_2004"] <- 1
+cses_pr$round2_PR[cses_pr$election =="ROU_2009"] <- 1
+cses_pr$round2_PR[cses_pr$election =="ROU_2014"] <- 1
+cses_pr$round2_PR[cses_pr$election =="SRB_2012"] <- 1
+cses_pr$round2_PR[cses_pr$election =="URY_2009"] <- 1
+
+
 ##### TRANSFORMAÇÕES #####
 
-cong_inv <- function(x, na.rm = FALSE) (x * -1)
+invert <- function(x, na.rm = FALSE) (x * -1)
 
 cses_pr <- cses_pr %>%
     mutate_at(vars(contains("cong")),
-              cong_inv) 
+              invert) 
 
 
 #RILE - MANIFESTO (transformando em escala 1 a 10)
@@ -769,8 +878,11 @@ cses_pr <- cses_pr %>%
 cses_pr$cname <- substr(cses_pr$election, 1, 3)
 
 des <- read.csv("C:/Users/livia/OneDrive - usp.br/TESE/DATASETS/Democratic Electoral Systems - GOLDER/es_data-v3.csv")
+#Source: http://mattgolder.com/elections
+
 des <- des %>% filter (presidential == 1 & year > 1994) # O ano nem precisava filtrar, mas o "presidential" sim senão
 #vai dar match errado, porque às vezes tem duas eleições, uma legislativa outra presidencial, no mesmo ano
+#
 
 #Mesmo processo que fiz com o CMP (criar variável "election" a partir de nome do país e ano):
 des$cname <- cses_pr$cname[match(des$country, cses_pr$country)]

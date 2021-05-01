@@ -2,6 +2,7 @@ library(tidyverse)
 
 ##### CSES #####
 
+
 #Arrumar tab_cses para ter só essas variáveis de interesse - ELECTION, ID MANIFESTO SÓ? 
 
 tab_cses <- cses %>% group_by(election, country) %>%
