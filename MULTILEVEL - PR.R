@@ -118,9 +118,12 @@ round_2 <- lmerTest::lmer(exp_cong_PR_1 ~ round2_PR + (1|election), data = cses_
  
 
 plot_models( SYS, SYS2, SYS_3, SYS_full, round_2, axis.labels = c("2 turnos", "Maioria qualificada",
-                                "Maioria absoluta", "Colégio eleitoral", "Pluralidade(com/ sem EUA)"),
+                                "Maioria absoluta", "Colégio eleitoral"),
   show.legend = TRUE, show.values = TRUE,  axis.title = "", ci.lvl =.99, 
-  dot.size=2, line.size =1, spacing = 0.5) 
+  dot.size=2, line.size =1, spacing = 0.5) +
+  scale_color_brewer(palette = "Set1", labels = c( "2 turnos (bivariada)", "Todos sistemas",
+                                                   "Colégio eleitoral/pluralidade", "Pluralidade(com EUA)",
+                                                   "Pluralidade(sem EUA)"))
 
 #TODOS MODELOS COM IC MUITO GRANDE, POUCO CASO, MENCIONAR SÓ BREVEMENTE O FULL MODEL TOTAL? SIM, 
 #INCLUIR ELE PORQUE SE TEM OUTRAS VAR TEM QUE TER ESSAS. AÍ FAZER PLOT, TABELA E REESCREVER, BIC, ETC.
